@@ -1,0 +1,5 @@
+train baseline CNN on numbers
+
+develop a testing environment
+
+how to get it to classify new things
