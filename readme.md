@@ -10,8 +10,7 @@
 
 ## Tutorial 2 Setup
 
-'''
+```
 pip install -U scikit-learn
 python tutorial2.py
-'''
-
+```
