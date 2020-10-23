@@ -47,3 +47,4 @@ def process(data_path, train_file, test_file, output_path):
         pickle.dump(data, fh)
 
 process("data/mnist/", "mnist_train.csv", "mnist_test.csv", "data/mnist/pickled_mnist.pkl")
+process("data/emnist/", "emnist_train.csv", "emnist_test.csv", "data/emnist/pickled_emnist.pkl")
