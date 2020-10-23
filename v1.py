@@ -1,4 +1,4 @@
-#Following this Tutorial:
+#Based on this code:
 #https://www.python-course.eu/neural_network_mnist.php
 
 import numpy as np
