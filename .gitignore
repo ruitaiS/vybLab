@@ -1,3 +1,5 @@
 *.csv
 *.pkl
+*.swp
 notes.md
+test.py
