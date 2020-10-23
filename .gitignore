@@ -1,5 +1,6 @@
 *.csv
 *.pkl
 *.swp
+__pycache__
 notes.md
 test.py

@@ -1,4 +1,4 @@
-## Tutorial Setup:
+## Setup:
 
 0. (Optional) Follow along using the tutorial from [this website](https://www.python-course.eu/neural_network_mnist.php)
 
@@ -17,6 +17,6 @@
 
 2. Run preproc.py (You only need to do this once)
 
-3. Run tutorial.py
+3. Run v1.py
 
 
