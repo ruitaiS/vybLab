@@ -30,6 +30,8 @@ ANN = NeuralNetwork(no_of_in_nodes = image_pixels,
                     no_of_out_nodes = 10, 
                     no_of_hidden_nodes = 100,
                     learning_rate = 0.1)
+
+MetaNN = NeuralNetwork(ANN.no_of_out_nodes, 2, 100, 0.1)
     
     
 for i in range(len(train_imgs)):

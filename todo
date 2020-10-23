@@ -1,0 +1,3 @@
+write method to store NNs (rn we're retraining new ones each run)
+
+process extended mnist

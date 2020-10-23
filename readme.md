@@ -1,4 +1,4 @@
-## Tutorial 1 Setup:
+## Tutorial Setup:
 
 0. (Optional) Follow along using the tutorial from [this website](https://www.python-course.eu/neural_network_mnist.php)
 
@@ -8,9 +8,4 @@
 
 3. Run tutorial.py
 
-## Tutorial 2 Setup
 
-```
-pip install -U scikit-learn
-python tutorial2.py
-```
