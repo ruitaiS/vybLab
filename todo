@@ -1,3 +1,13 @@
-write method to store NNs (rn we're retraining new ones each run)
+Pseudo:
 
-process extended mnist
+Train NN1 on digits only
+
+Test NN1 with a mixed set of digits and letters
+
+    Train NN2 using the output vector of NN1 as input vector, and label = digits vs. letters
+
+
+
+
+
+

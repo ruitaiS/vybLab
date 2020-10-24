@@ -6,49 +6,98 @@ import matplotlib.pyplot as plt
 import pickle
 from scipy.stats import truncnorm
 
+import random
+
 from NN import NeuralNetwork
 
-#Initializing Dataset:
+#Initializing Datasets:
 #------------------------------------------------------
+image_size = 28 # width and length
+image_pixels = image_size * image_size
+
 with open("data/mnist/pickled_mnist.pkl", "br") as fh:
     data = pickle.load(fh)
 
-train_imgs = data[0]
-test_imgs = data[1]
-train_labels = data[2]
-test_labels = data[3]
-train_labels_one_hot = data[4]
-test_labels_one_hot = data[5]
+digits_train_imgs = data[0]
+digits_test_imgs = data[1]
+digits_train_labels = data[2]
+digits_test_labels = data[3]
+digits_train_labels_one_hot = data[4]
+digits_test_labels_one_hot = data[5]
 
-image_size = 28 # width and length
-no_of_different_labels = 10 #  i.e. 0, 1, 2, 3, ..., 9
-image_pixels = image_size * image_size
+with open("data/emnist/pickled_emnist.pkl", "br") as fh:
+    data = pickle.load(fh)
+
+letters_train_imgs = data[0]
+letters_test_imgs = data[1]
+letters_train_labels = data[2]
+letters_test_labels = data[3]
+letters_train_labels_one_hot = data[4]
+letters_test_labels_one_hot = data[5]
+
+#Take last 1/3 of letters + digits training, make mixed training set
+#40000 elements in each (letters, digits, mixed)
+mixed_train_imgs = np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:]))
+mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
+
+#Shuffle mixed images & labels so index matching is preserved
+#TODO confirm this actually does it properly
+shuffler = np.random.permutation(len(mixed_train_imgs))
+mixed_train_imgs = mixed_train_imgs[shuffler]
+mixed_train_labels = mixed_train_labels[shuffler]
+
+#Remove last 20k from both img and label for letters/digits
+digits_train_imgs = digits_train_imgs[:40000]
+letters_train_imgs = letters_train_imgs[:40000]
+digits_train_labels = digits_train_labels[:40000]
+letters_train_labels = letters_train_labels[:40000]
+
+print(len(mixed_train_labels))
+print(mixed_train_labels[1241])
+print(mixed_train_labels[21000])
 #------------------------------------------------------
 
 
-ANN = NeuralNetwork(no_of_in_nodes = image_pixels, 
+Digit_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
                     no_of_out_nodes = 10, 
                     no_of_hidden_nodes = 100,
                     learning_rate = 0.1)
 
-MetaNN = NeuralNetwork(ANN.no_of_out_nodes, 2, 100, 0.1)
-    
-    
-for i in range(len(train_imgs)):
-    ANN.train(train_imgs[i], train_labels_one_hot[i])
+Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
+                    no_of_out_nodes = 26, 
+                    no_of_hidden_nodes = 100,
+                    learning_rate = 0.1)
+
+MetaNN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
+
+
+print(len(digits_train_labels))
+print(type(digits_train_labels))
+for i in range (20):
+    print (digits_train_labels[i])
+
+print(len(letters_train_labels))
+for i in range (20):
+    print (letters_train_labels[i])
+
+
+
+'''    
+for i in range(len(digits_train_imgs)):
+    ANN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
 for i in range(20):
-    res = ANN.run(test_imgs[i])
-    print(test_labels[i], np.argmax(res), np.max(res))
+    res = ANN.run(digits_test_imgs[i])
+    print(digits_test_labels[i], np.argmax(res), np.max(res))
 
 
-corrects, wrongs = ANN.evaluate(train_imgs, train_labels)
+corrects, wrongs = ANN.evaluate(digits_train_imgs, digits_train_labels)
 print("accuracy train: ", corrects / ( corrects + wrongs))
-corrects, wrongs = ANN.evaluate(test_imgs, test_labels)
+corrects, wrongs = ANN.evaluate(digits_test_imgs, digits_test_labels)
 print("accuracy: test", corrects / ( corrects + wrongs))
 
-cm = ANN.confusion_matrix(train_imgs, train_labels)
+cm = ANN.confusion_matrix(digits_train_imgs, digits_train_labels)
 print(cm)
 
 for i in range(10):
     print("digit: ", i, "precision: ", ANN.precision(i, cm), "recall: ", ANN.recall(i, cm))
-
+'''
