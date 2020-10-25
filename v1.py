@@ -37,15 +37,20 @@ letters_test_labels_one_hot = data[5]
 
 #TODO Ensure this way of splitting is methodologically sound
 
+#Labels are 0, 1 of whether something is a digit or letter
+#Values are the actual letter/digit being represented
+
 #Take last 1/3 of letters + digits training, make mixed training set
 #40000 elements in each (letters, digits, mixed)
 mixed_train_imgs = np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:]))
 mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
+mixed_train_values = np.concatenate((digits_train_labels[40000:], letters_train_labelgs[40000:]))
 
 #Take half of letters/digits test sets to make mixed test set
 #10k each in originals; 10k in mixed set
 mixed_test_imgs = np.concatenate((digits_test_imgs[5000:], letters_test_imgs[5000:]))
 mixed_test_labels = np.concatenate((np.full(5000, 0), np.full(5000, 1)))
+mixed_test_values = np.concatenate((digits_test_labels[5000:], letters_test_labels[5000:]))
 
 #Shuffle mixed images & labels so index matching is preserved
 #TODO Confirm this actually does it properly
@@ -111,7 +116,7 @@ print("accuracy: test", corrects / ( corrects + wrongs))
 for i in range(len(mixed_train_imgs)):
     #print(len(Digit_NN.run(mixed_train_imgs[i])))
     #TODO Figure out what is one_hot?
-    Meta_NN.train(Digit_NN.run(mixed_train_imgs[i]).T, mixed_train_labels[i])
+    Meta_NN.train(np.sort(Digit_NN.run(mixed_train_imgs[i]).T), mixed_train_labels[i])
 
 #Display Statistics for Meta
 corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_train_imgs, mixed_train_labels)
@@ -120,6 +125,12 @@ corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_test_imgs, mixed_test_labels
 print("accuracy: test", corrects / ( corrects + wrongs))
 
 
+#TODO: try sorting the subNN array first
+#Ok sorting it made it worse
+
+#Roughly 0.5 without sorting
+#0.7ish with sorting, sometimes dips into 0.4s and .3's, but usually .6+
+#What is the deal with this variation??
 
 '''    
 for i in range(len(digits_train_imgs)):

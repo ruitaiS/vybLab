@@ -159,7 +159,7 @@ class NeuralNetwork:
     def metaEval(self, subNN, data, labels):
         corrects, wrongs = 0, 0
         for i in range(len(data)):
-            res = subNN.run(data[i])
+            res = self.run(np.sort(subNN.run(data[i]).T))
             res_max = res.argmax()
             if res_max == labels[i]:
                 corrects += 1
