@@ -143,10 +143,23 @@ class NeuralNetwork:
         return confusion_matrix[label, label] / row.sum()
         
     
+    #This can't be used for Meta, because the input data is actually pre-processed by another NN first
+    #Use metaEval instead
     def evaluate(self, data, labels):
         corrects, wrongs = 0, 0
         for i in range(len(data)):
             res = self.run(data[i])
+            res_max = res.argmax()
+            if res_max == labels[i]:
+                corrects += 1
+            else:
+                wrongs += 1
+        return corrects, wrongs
+
+    def metaEval(self, subNN, data, labels):
+        corrects, wrongs = 0, 0
+        for i in range(len(data)):
+            res = subNN.run(data[i])
             res_max = res.argmax()
             if res_max == labels[i]:
                 corrects += 1

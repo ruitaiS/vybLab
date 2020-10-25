@@ -107,16 +107,16 @@ print("accuracy train: ", corrects / ( corrects + wrongs))
 corrects, wrongs = Digit_NN.evaluate(digits_test_imgs, digits_test_labels)
 print("accuracy: test", corrects / ( corrects + wrongs))
 
-#Train MetaNN
+#Train MetaNN, save NN output vectors to be evaluated later
 for i in range(len(mixed_train_imgs)):
     #print(len(Digit_NN.run(mixed_train_imgs[i])))
     #TODO Figure out what is one_hot?
     Meta_NN.train(Digit_NN.run(mixed_train_imgs[i]).T, mixed_train_labels[i])
 
 #Display Statistics for Meta
-corrects, wrongs = Meta_NN.evaluate(Digit_NN.run(mixed_train_imgs[i]).T, mixed_train_labels)
+corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_train_imgs, mixed_train_labels)
 print("accuracy train: ", corrects / ( corrects + wrongs))
-corrects, wrongs = Meta_NN.evaluate(Digit_NN.run(mixed_test_imgs[i]).T, mixed_test_labels)
+corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_test_imgs, mixed_test_labels)
 print("accuracy: test", corrects / ( corrects + wrongs))
 
 
