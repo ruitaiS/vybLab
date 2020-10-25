@@ -1,13 +1,30 @@
-Pseudo:
+Oct 25 Thoughts:
 
-Train NN1 on digits only
+The basic setup is working. One NN is trained on digits, another looks at the output vector of the first, and based on that tries to determine if the first NN knows what it is looking at.
 
-Test NN1 with a mixed set of digits and letters
+I sorted the digits NN output vector, b/c I figured if the first NN knows what it's looking at, it will fire very strongly on one output and weaker on the others, whereas if it is uncertain, it should be pretty even across the board (I'm not actually sure about this though, becuase I haven't actually looked at it myself). By sorting them, I figured the strongest outputs would always be towards the same indices of the input array, and hence be easier for the second NN to deduce patterns from.
 
-    Train NN2 using the output vector of NN1 as input vector, and label = digits vs. letters
+There seems to be a high amount of variability. I ran it 100 times, and the average accuracy of all 100 ended up being a little lower than 50%. However, there are some NN's that are capable of upwards of 75% accuracy. I think are legitimate results because they remain consistent on the training and test sets. A good way to confirm this would be to store the models with the most success, and see if they are able to repeat the results when given *other* NN's to examine.
+
+I think there may be something to do with the way that the NN's are being generated that is causing some of them to perform really well, while others are abysmal (25% accuracy).
+
+Another explanation would be that my code isn't working properly hahaha. Definitely couple of due diligence things that I ought to double back on; I was just so excited about getting it working that I skipped over the boring stuff.
 
 
 
+Todo:
+    (Super boring) Double-check that the code is working as intended
+        - Are the arrays set up properly?
+        - is everything being multiplied properly?
+        -Are the transposes supposed to be transposed?
+
+    (Still kinda boring) Read up on statistics and standard deviations and normal distributions and confidence intervals and blah bah blah blah blah
+
+    Make a confusion matrix output to show which letters / numbers it confuses for numbers / letters
+
+    Train the MetaNN by giving it *more than one* digits NN to look at
+
+    
 
 
 

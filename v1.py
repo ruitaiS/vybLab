@@ -44,7 +44,7 @@ letters_test_labels_one_hot = data[5]
 #40000 elements in each (letters, digits, mixed)
 mixed_train_imgs = np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:]))
 mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
-mixed_train_values = np.concatenate((digits_train_labels[40000:], letters_train_labelgs[40000:]))
+mixed_train_values = np.concatenate((digits_train_labels[40000:], letters_train_labels[40000:]))
 
 #Take half of letters/digits test sets to make mixed test set
 #10k each in originals; 10k in mixed set
@@ -78,55 +78,58 @@ print(len(mixed_test_labels))
 print(len(mixed_test_imgs))
 #------------------------------------------------------
 
+def iterate():
+    Digit_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
+                        no_of_out_nodes = 10, 
+                        no_of_hidden_nodes = 100,
+                        learning_rate = 0.1)
 
-Digit_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
-                    no_of_out_nodes = 10, 
-                    no_of_hidden_nodes = 100,
-                    learning_rate = 0.1)
+    Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
+                        no_of_out_nodes = 26, 
+                        no_of_hidden_nodes = 100,
+                        learning_rate = 0.1)
 
-Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
-                    no_of_out_nodes = 26, 
-                    no_of_hidden_nodes = 100,
-                    learning_rate = 0.1)
+    Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
 
-Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
+    #Train Digit NN
+    for i in range(len(digits_train_imgs)):
+        Digit_NN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
 
-'''
-print(len(digits_train_labels))
-print(type(digits_train_labels))
-for i in range (20):
-    print (digits_train_labels[i])
+    #Display Statistics for Digits
+    corrects, wrongs = Digit_NN.evaluate(digits_train_imgs, digits_train_labels)
+    print("accuracy train: ", corrects / ( corrects + wrongs))
+    corrects, wrongs = Digit_NN.evaluate(digits_test_imgs, digits_test_labels)
+    print("accuracy: test", corrects / ( corrects + wrongs))
 
-print(len(letters_train_labels))
-for i in range (20):
-    print (letters_train_labels[i])
-'''
+    #Train MetaNN, save NN output vectors to be evaluated later
+    for i in range(len(mixed_train_imgs)):
 
-#Train Digit NN
-for i in range(len(digits_train_imgs)):
-    Digit_NN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
+        Meta_NN.train(np.sort(Digit_NN.run(mixed_train_imgs[i]).T), mixed_train_labels[i])
 
-#Display Statistics for Digits
-corrects, wrongs = Digit_NN.evaluate(digits_train_imgs, digits_train_labels)
-print("accuracy train: ", corrects / ( corrects + wrongs))
-corrects, wrongs = Digit_NN.evaluate(digits_test_imgs, digits_test_labels)
-print("accuracy: test", corrects / ( corrects + wrongs))
+    #Display Statistics for Meta
+    corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_train_imgs, mixed_train_labels)
+    train_accuracy = corrects / ( corrects + wrongs)
+    print("Train Accuracy: ", train_accuracy)
+    corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_test_imgs, mixed_test_labels)
+    test_accuracy = corrects / ( corrects + wrongs)
+    print("Test Accuracy: ", test_accuracy)
 
-#Train MetaNN, save NN output vectors to be evaluated later
-for i in range(len(mixed_train_imgs)):
-    #print(len(Digit_NN.run(mixed_train_imgs[i])))
-    #TODO Figure out what is one_hot?
-    Meta_NN.train(np.sort(Digit_NN.run(mixed_train_imgs[i]).T), mixed_train_labels[i])
+    return train_accuracy, test_accuracy
 
-#Display Statistics for Meta
-corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_train_imgs, mixed_train_labels)
-print("accuracy train: ", corrects / ( corrects + wrongs))
-corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_test_imgs, mixed_test_labels)
-print("accuracy: test", corrects / ( corrects + wrongs))
+#Iterate 100 Times and Collect data
 
+def test(iterations):
+    train_sum = 0
+    test_sum = 0
+    for i in range(iterations):
+        a, b = iterate()
+        train_sum += a
+        test_sum += b
+    print("Train Average: ", train_sum / iterations)
+    print("Test Average: ", test_sum / iterations)
 
-#TODO: try sorting the subNN array first
-#Ok sorting it made it worse
+test(100)
+
 
 #Roughly 0.5 without sorting
 #0.7ish with sorting, sometimes dips into 0.4s and .3's, but usually .6+
