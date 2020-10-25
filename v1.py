@@ -84,7 +84,7 @@ Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels,
                     no_of_hidden_nodes = 100,
                     learning_rate = 0.1)
 
-MetaNN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
+Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
 
 '''
 print(len(digits_train_labels))
@@ -98,9 +98,26 @@ for i in range (20):
 '''
 
 #Train Digit NN
-#for i in range(len(digits_train_imgs)):
-#    Digit_NN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
+for i in range(len(digits_train_imgs)):
+    Digit_NN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
 
+#Display Statistics for Digits
+corrects, wrongs = Digit_NN.evaluate(digits_train_imgs, digits_train_labels)
+print("accuracy train: ", corrects / ( corrects + wrongs))
+corrects, wrongs = Digit_NN.evaluate(digits_test_imgs, digits_test_labels)
+print("accuracy: test", corrects / ( corrects + wrongs))
+
+#Train MetaNN
+for i in range(len(mixed_train_imgs)):
+    #print(len(Digit_NN.run(mixed_train_imgs[i])))
+    #TODO Figure out what is one_hot?
+    Meta_NN.train(Digit_NN.run(mixed_train_imgs[i]).T, mixed_train_labels[i])
+
+#Display Statistics for Meta
+corrects, wrongs = Meta_NN.evaluate(Digit_NN.run(mixed_train_imgs[i]).T, mixed_train_labels)
+print("accuracy train: ", corrects / ( corrects + wrongs))
+corrects, wrongs = Meta_NN.evaluate(Digit_NN.run(mixed_test_imgs[i]).T, mixed_test_labels)
+print("accuracy: test", corrects / ( corrects + wrongs))
 
 
 
@@ -110,12 +127,6 @@ for i in range(len(digits_train_imgs)):
 for i in range(20):
     res = ANN.run(digits_test_imgs[i])
     print(digits_test_labels[i], np.argmax(res), np.max(res))
-
-
-corrects, wrongs = ANN.evaluate(digits_train_imgs, digits_train_labels)
-print("accuracy train: ", corrects / ( corrects + wrongs))
-corrects, wrongs = ANN.evaluate(digits_test_imgs, digits_test_labels)
-print("accuracy: test", corrects / ( corrects + wrongs))
 
 cm = ANN.confusion_matrix(digits_train_imgs, digits_train_labels)
 print(cm)

@@ -124,6 +124,7 @@ class NeuralNetwork:
 #Rest of this stuff is for presentation:
 #---------------------------------------
             
+    #TODO For mixed sets, show which letters / numbers get confused for numbers / letters
     def confusion_matrix(self, data_array, labels):
         cm = np.zeros((10, 10), int)
         for i in range(len(data_array)):
