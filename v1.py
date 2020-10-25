@@ -35,16 +35,27 @@ letters_test_labels = data[3]
 letters_train_labels_one_hot = data[4]
 letters_test_labels_one_hot = data[5]
 
+#TODO Ensure this way of splitting is methodologically sound
+
 #Take last 1/3 of letters + digits training, make mixed training set
 #40000 elements in each (letters, digits, mixed)
 mixed_train_imgs = np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:]))
 mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
 
+#Take half of letters/digits test sets to make mixed test set
+#10k each in originals; 10k in mixed set
+mixed_test_imgs = np.concatenate((digits_test_imgs[5000:], letters_test_imgs[5000:]))
+mixed_test_labels = np.concatenate((np.full(5000, 0), np.full(5000, 1)))
+
 #Shuffle mixed images & labels so index matching is preserved
-#TODO confirm this actually does it properly
+#TODO Confirm this actually does it properly
 shuffler = np.random.permutation(len(mixed_train_imgs))
 mixed_train_imgs = mixed_train_imgs[shuffler]
 mixed_train_labels = mixed_train_labels[shuffler]
+
+shuffler2 = np.random.permutation(len(mixed_test_imgs))
+mixed_test_imgs = mixed_test_imgs[shuffler2]
+mixed_test_labels = mixed_test_labels[shuffler2]
 
 #Remove last 20k from both img and label for letters/digits
 digits_train_imgs = digits_train_imgs[:40000]
@@ -52,9 +63,14 @@ letters_train_imgs = letters_train_imgs[:40000]
 digits_train_labels = digits_train_labels[:40000]
 letters_train_labels = letters_train_labels[:40000]
 
-print(len(mixed_train_labels))
-print(mixed_train_labels[1241])
-print(mixed_train_labels[21000])
+#Remove last 5k from test img/label sets for letters/digits
+digits_test_imgs = digits_test_imgs[:5000]
+letters_test_imgs = letters_test_imgs[:5000]
+digits_test_labels = digits_test_labels[:5000]
+letters_test_labels = letters_test_labels[:5000]
+
+print(len(mixed_test_labels))
+print(len(mixed_test_imgs))
 #------------------------------------------------------
 
 
@@ -70,7 +86,7 @@ Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels,
 
 MetaNN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
 
-
+'''
 print(len(digits_train_labels))
 print(type(digits_train_labels))
 for i in range (20):
@@ -79,6 +95,12 @@ for i in range (20):
 print(len(letters_train_labels))
 for i in range (20):
     print (letters_train_labels[i])
+'''
+
+#Train Digit NN
+#for i in range(len(digits_train_imgs)):
+#    Digit_NN.train(digits_train_imgs[i], digits_train_labels_one_hot[i])
+
 
 
 
