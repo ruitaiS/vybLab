@@ -57,10 +57,12 @@ mixed_test_values = np.concatenate((digits_test_labels[5000:], letters_test_labe
 shuffler = np.random.permutation(len(mixed_train_imgs))
 mixed_train_imgs = mixed_train_imgs[shuffler]
 mixed_train_labels = mixed_train_labels[shuffler]
+mixed_train_values = mixed_train_values[shuffler]
 
 shuffler2 = np.random.permutation(len(mixed_test_imgs))
 mixed_test_imgs = mixed_test_imgs[shuffler2]
 mixed_test_labels = mixed_test_labels[shuffler2]
+mixed_test_values = mixed_test_values[shuffler2]
 
 #Remove last 20k from both img and label for letters/digits
 digits_train_imgs = digits_train_imgs[:40000]
@@ -89,7 +91,7 @@ def iterate():
                         no_of_hidden_nodes = 100,
                         learning_rate = 0.1)
 
-    Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.1)
+    Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.05)
 
     #Train Digit NN
     for i in range(len(digits_train_imgs)):
@@ -103,7 +105,6 @@ def iterate():
 
     #Train MetaNN, save NN output vectors to be evaluated later
     for i in range(len(mixed_train_imgs)):
-
         Meta_NN.train(np.sort(Digit_NN.run(mixed_train_imgs[i]).T), mixed_train_labels[i])
 
     #Display Statistics for Meta

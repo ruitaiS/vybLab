@@ -47,6 +47,9 @@ class NeuralNetwork:
         self.no_of_hidden_nodes = no_of_hidden_nodes
         self.learning_rate = learning_rate 
         self.create_weight_matrices()
+
+    def set_learning_rate(rate):
+        self.learning_rate = learning_rate
         
     def create_weight_matrices(self):
         """ 

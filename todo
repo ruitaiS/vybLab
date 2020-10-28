@@ -13,6 +13,8 @@ Another explanation would be that my code isn't working properly hahaha. Definit
 
 
 Todo:
+    Code optimization. I think the eval and test and run have a lot of repeated function calls that go through the entire dataset. Store instead of running again, could save a lot of time.
+
     (Super boring) Double-check that the code is working as intended
         - Are the arrays set up properly?
         - is everything being multiplied properly?
