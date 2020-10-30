@@ -80,16 +80,19 @@ print(len(mixed_test_labels))
 print(len(mixed_test_imgs))
 #------------------------------------------------------
 
-def iterate():
+#Creates a Digit / Meta NN pair
+#The Digit NN is trained on digits, then the Meta NN is trained on the outputs of that specific digit NN
+def generate():
     Digit_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
                         no_of_out_nodes = 10, 
                         no_of_hidden_nodes = 100,
                         learning_rate = 0.1)
-
+    '''
     Letter_NN = NeuralNetwork(no_of_in_nodes = image_pixels, 
                         no_of_out_nodes = 26, 
                         no_of_hidden_nodes = 100,
                         learning_rate = 0.1)
+    '''
 
     Meta_NN = NeuralNetwork(Digit_NN.no_of_out_nodes, 2, 100, 0.05)
 
@@ -115,21 +118,33 @@ def iterate():
     test_accuracy = corrects / ( corrects + wrongs)
     print("Test Accuracy: ", test_accuracy)
 
-    return train_accuracy, test_accuracy
+    return train_accuracy, test_accuracy, Digit_NN, Meta_NN
 
 #Iterate 100 Times and Collect data
-
 def test(iterations):
     train_sum = 0
     test_sum = 0
     for i in range(iterations):
-        a, b = iterate()
+        a, b = generate()
         train_sum += a
         test_sum += b
     print("Train Average: ", train_sum / iterations)
     print("Test Average: ", test_sum / iterations)
 
-test(100)
+#test(100)
+
+#Returns a list of high performing Meta_NN's 
+def collectBest(minAccuracy, amount):
+    metaNets = []
+    subNets = []
+    while (len(metaNets) < amount):
+        a,b,letters, meta = generate()
+        subNets.append(letters)
+        if (a + b)/2 > minAccuracy:
+            metaNets.append(meta, letters)
+    return metaNets, subNets
+    
+
 
 
 #Roughly 0.5 without sorting

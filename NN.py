@@ -48,7 +48,7 @@ class NeuralNetwork:
         self.learning_rate = learning_rate 
         self.create_weight_matrices()
 
-    def set_learning_rate(rate):
+    def set_learning_rate(self, learning_rate):
         self.learning_rate = learning_rate
         
     def create_weight_matrices(self):
@@ -169,3 +169,6 @@ class NeuralNetwork:
             else:
                 wrongs += 1
         return corrects, wrongs
+
+    def equals(self, NN):
+        return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
