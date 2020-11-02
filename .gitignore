@@ -1,4 +1,8 @@
 *.csv
 *.pkl
+*.csv
 *.p
+*.gz
+*ubyte
+*.txt
 .DS-Store
