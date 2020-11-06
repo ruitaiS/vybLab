@@ -35,6 +35,7 @@ letters_test_labels = data[3]
 letters_train_labels_one_hot = data[4]
 letters_test_labels_one_hot = data[5]
 
+
 #TODO Ensure this way of splitting is methodologically sound
 
 #Labels are 0, 1 of whether something is a digit or letter
@@ -45,6 +46,8 @@ letters_test_labels_one_hot = data[5]
 mixed_train_imgs = np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:]))
 mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
 mixed_train_values = np.concatenate((digits_train_labels[40000:], letters_train_labels[40000:]))
+
+
 
 #Take half of letters/digits test sets to make mixed test set
 #10k each in originals; 10k in mixed set
@@ -111,12 +114,18 @@ def generate():
         Meta_NN.train(np.sort(Digit_NN.run(mixed_train_imgs[i]).T), mixed_train_labels[i])
 
     #Display Statistics for Meta
+    #TODO: Investigate whether this has redundant code
     corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_train_imgs, mixed_train_labels)
     train_accuracy = corrects / ( corrects + wrongs)
     print("Train Accuracy: ", train_accuracy)
+    print("Train Confusion Matrix: ")
+    print(Meta_NN.meta_confusion_matrix(Digit_NN,mixed_train_imgs, mixed_train_labels, mixed_train_values))
+
     corrects, wrongs = Meta_NN.metaEval(Digit_NN, mixed_test_imgs, mixed_test_labels)
     test_accuracy = corrects / ( corrects + wrongs)
     print("Test Accuracy: ", test_accuracy)
+    print("Test Confusion Matrix: ")
+    print(Meta_NN.meta_confusion_matrix(Digit_NN,mixed_test_imgs, mixed_test_labels, mixed_test_values))
 
     return train_accuracy, test_accuracy, Digit_NN, Meta_NN
 
@@ -125,7 +134,7 @@ def test(iterations):
     train_sum = 0
     test_sum = 0
     for i in range(iterations):
-        a, b = generate()
+        a, b, digit, meta = generate()
         train_sum += a
         test_sum += b
     print("Train Average: ", train_sum / iterations)

@@ -34,6 +34,11 @@ def truncated_normal(mean=0, sd=1, low=0, upp=10):
                      loc=mean, 
                      scale=sd)
 
+#Convert letter labels to alphanumeric characters
+def valueToChar(i):
+    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    return letters[i]
+
 
 class NeuralNetwork:
     
@@ -126,6 +131,8 @@ class NeuralNetwork:
 #---------------------------------------
 #Rest of this stuff is for presentation:
 #---------------------------------------
+
+
             
     #TODO For mixed sets, show which letters / numbers get confused for numbers / letters
     def confusion_matrix(self, data_array, labels):
@@ -135,7 +142,19 @@ class NeuralNetwork:
             res_max = res.argmax()
             target = labels[i][0]
             cm[res_max, int(target)] += 1
-        return cm    
+        return cm
+
+    def meta_confusion_matrix(self, subNN, data, labels, values):
+        '''
+            Some digits get confused for letters. Some letters get confused for digits
+            
+            The meta gets labels (0,1) for numbers/letters, but we also need access to to the "real" labels of what is being represented
+
+
+        '''
+        for i in range(len(data)):
+            
+            
 
     def precision(self, label, confusion_matrix):
         col = confusion_matrix[:, label]

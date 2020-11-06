@@ -1,3 +1,10 @@
+Nov 1 Todo:
+Reshuffle the train and test sets after each iteration
+
+baby network trained on the output of the momma network?
+
+
+
 Oct 25 Thoughts:
 
 The basic setup is working. One NN is trained on digits, another looks at the output vector of the first, and based on that tries to determine if the first NN knows what it is looking at.
