@@ -13,8 +13,12 @@ import sys
 #function(NDArray) will apply the function to every element in the array & return a new one
 def sigmoid(x):
         return 1 / (1 + np.e ** -x)
-activation_function = sigmoid
 
+def tanh(x): 
+    return 0.5 * (np.tanh(x) + 1)
+
+#The activation function for the model. 
+activation_function = sigmoid
 
 '''
 Truncated Normal Distribution Function
@@ -39,7 +43,7 @@ def truncated_normal(mean=0, sd=1, low=0, upp=10):
 #Helper method to convert to one hot. 
 def to_one_hot(n): 
     r = np.zeros(10)
-    r[n] = 1.0
+    r[int(n)] = 1.0
     return r
 
 class NeuralNetworkPipe:
@@ -166,55 +170,6 @@ class NeuralNetworkPipe:
     
         return output_vector
 
-#---------------------------------------
-#Rest of this stuff is for presentation:
-#---------------------------------------
-            
-    #TODO For mixed sets, show which letters / numbers get confused for numbers / letters
-    def confusion_matrix(self, data_array, labels):
-        cm = np.zeros((10, 10), int)
-        for i in range(len(data_array)):
-            res = self.run(data_array[i])
-            res_max = res.argmax()
-            target = labels[i][0]
-            cm[res_max, int(target)] += 1
-        return cm    
-
-    def precision(self, label, confusion_matrix):
-        col = confusion_matrix[:, label]
-        return confusion_matrix[label, label] / col.sum()
-    
-    def recall(self, label, confusion_matrix):
-        row = confusion_matrix[label, :]
-        return confusion_matrix[label, label] / row.sum()
-        
-    
-    #This can't be used for Meta, because the input data is actually pre-processed by another NN first
-    #Use metaEval instead
-    def evaluate(self, data, labels):
-        corrects, wrongs = 0, 0
-        for i in range(len(data)):
-            res = self.run(data[i])
-            res_max = res.argmax()
-            if res_max == labels[i]:
-                corrects += 1
-            else:
-                wrongs += 1
-        return corrects, wrongs
-
-    def metaEval(self, subNN, data, labels):
-        corrects, wrongs = 0, 0
-        for i in range(len(data)):
-            res = self.run(np.sort(subNN.run(data[i]).T))
-            res_max = res.argmax()
-            if res_max == labels[i]:
-                corrects += 1
-            else:
-                wrongs += 1
-        return corrects, wrongs
-
-    
-    
     #Test the network that this is given. 
     def test_network(super_net): 
         #Testing parameters. 
@@ -245,46 +200,84 @@ class NeuralNetworkPipe:
             "megabytes")
 
         print("Beginning training.")
-        #The initial training of the sub_model. (With only the numbers.)
-        '''
+
+        #Pre train the sub network. 
         split = len(num_train_imgs)
         num_accuracy_results = []
         for i in range(split):
             img = num_train_imgs[i][1:]
             lab = to_one_hot(num_train_labels[i])
-            if (np.argmax(super_net.predict_subnetwork(img, lab)) == np.argmax(lab)): 
-                num_accuracy_results.append(1)
-            else: 
-                num_accuracy_results.append(0)
-        '''
-        #Compile the characters that we will be using.
-        char_accuracy_results = []
-        chars = list(zip(zip(char_train_imgs, np.ones(len(char_train_imgs))), np.ones(len(char_train_imgs))))
-        numbs = list(zip(zip(np.array(num_train_imgs)[:,1:], np.zeros(len(num_train_imgs))), np.array(num_train_imgs)[:,1])) 
+            super_net.train_subnetwork(img, lab)
+
+        #Stage two training. 
+        is_char = np.array(np.ones(len(char_train_imgs)), dtype='bool')
+        is_num = np.array(np.zeros(len(num_train_imgs)), dtype='bool')
+        chars = list(zip(zip(char_train_imgs, is_char), np.ones(len(char_train_imgs))))
+        numbs = list(zip(zip(np.array(num_train_imgs)[:,1:], is_num), np.array(num_train_labels)))
         vals = list(chars + numbs)
-        #Recycle training data. 
-        vals = vals + vals + vals
         random.shuffle(vals)
-        for i in range(int(len(vals)/2)): 
-            ((img, l), lab) = vals[i]
-            meta_lab = [0,0]
-            meta_lab[int(l)] = 1
-            if(np.argmax(super_net.train_both_networks(img, meta_lab, lab)) == l):
-                char_accuracy_results.append(1)
-            else: 
-                char_accuracy_results.append(0)
+        for i in range(int(len(vals))): 
+            ((img, is_char), lab) = vals[i]
+            if is_char: 
+                t = super_net.run_subnetwork(img)
+                s = super_net.predict(t.flatten(), [0.0, 1.0])
+            else:
+                t = super_net.run_subnetwork(img)
+                s = super_net.predict(t.flatten(), [1.0, 0.0])
+
+        #Train both networks together.
+        char_accuracy_results = []
+        num_accuracy_results = []
+        is_char = np.array(np.ones(len(char_train_imgs)), dtype='bool')
+        is_num = np.array(np.zeros(len(num_train_imgs)), dtype='bool')
+        chars = list(zip(zip(char_train_imgs, is_char), np.ones(len(char_train_imgs))))
+        numbs = list(zip(zip(np.array(num_train_imgs)[:,1:], is_num), np.array(num_train_labels)))
+        vals = list(chars + numbs)
+        random.shuffle(vals)
+        for i in range(int(len(vals))): 
+            ((img, is_char), lab) = vals[i]
+            if is_char: 
+                t = super_net.run_subnetwork(img)
+                s = super_net.predict(t.flatten(), [0.0, 1.0])
+                if np.argmax(s) == 1: 
+                    char_accuracy_results.append(1.0)
+                else: 
+                    char_accuracy_results.append(0.0)
+                num_accuracy_results.append(None)
+            else:
+                t = super_net.predict_subnetwork(img, to_one_hot(lab))
+                s = super_net.predict(t.flatten(), [1.0, 0.0])
+                if np.argmax(s) == 0: 
+                    char_accuracy_results.append(1.0)
+                else: 
+                    char_accuracy_results.append(0.0)
+                if np.argmax(t) == lab: 
+                    num_accuracy_results.append(1.0)
+                else: 
+                    num_accuracy_results.append(0.0)
 
         print("Done training.")
         print("Compiling results.")
 
         #Create a running average of the accuracy. 
-        accuracy = []
+        char_accuracy = []
+        num_accuracy = []
         window = 1000
         for i in range(len(char_accuracy_results) - window):
             acc = 0
             for j in range(window): 
                 acc += char_accuracy_results[i+j]
-            accuracy.append(acc/window)
-
-        plt.plot(accuracy)
+            char_accuracy.append(acc/window)
+        for i in range(len(num_accuracy_results) - window):
+            acc = 0
+            count = 0
+            for j in range(window): 
+                if num_accuracy_results[i+j] != None: 
+                    acc += num_accuracy_results[i+j]
+                    count += 1
+            num_accuracy.append(acc/count)
+        plt.plot(char_accuracy, label="Meta Network Accuracy")
+        plt.plot(num_accuracy, label="Sub Network Accuracy")
+        plt.title("Staged Pre-Training 0.1 LR\nSigmoid Activation Function")
+        plt.legend(loc="lower right")
         plt.show()
