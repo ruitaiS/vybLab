@@ -18,7 +18,7 @@ def truncated_normal(mean=0, sd=1, low=0, upp=10):
                      loc=mean, 
                      scale=sd)
 
-class NeuralNetwork:
+class NeuralNet:
     
     def __init__(self, 
                  no_of_in_nodes, 
