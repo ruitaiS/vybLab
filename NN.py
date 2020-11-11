@@ -152,7 +152,14 @@ class NeuralNetwork:
 
 
         '''
+        mistakenDigits = np.zeros((10, 26), int)
+        mistakenLetters = np.zeros((26, 10), int)
         for i in range(len(data)):
+            res = self.run(subNN.run(data[i]))
+            res_max = res.argmax()
+            target = labels[i][0]
+            cm[res_max, int(target)] += 1
+        return cm
             
             
 
