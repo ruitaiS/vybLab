@@ -6,6 +6,10 @@ class Data:
     def __init__(self): 
         #Initializing Datasets:
         #------------------------------------------------------
+        #TODO: Organize so that each dataset is a list of 3 (img input, label, and one-hot representation)
+        #That way you don't have a million confusing lines like this.
+        #But first will need to figure out how the metaNN takes in inputs
+        #------------------------------------------------------
         self.image_size = 28 # width and length
         self.image_pixels = self.image_size * self.image_size
 
