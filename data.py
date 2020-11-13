@@ -23,6 +23,12 @@ class Data:
         self.digits_train_labels_one_hot = data[4]
         self.digits_test_labels_one_hot = data[5]
 
+        #smaller / faster set for code testing purposes
+        self.mini_imgs = self.digits_train_imgs[:10000]
+        self.mini_labels = self.digits_train_labels[:10000]
+        self.mini_one_hot = self.digits_train_labels_one_hot[:10000]
+    
+
         with open("data/emnist/pickled_emnist.pkl", "br") as fh:
             data = pickle.load(fh)
 
