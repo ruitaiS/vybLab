@@ -3,7 +3,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pickle
 from scipy.stats import truncnorm
 
 #Determines activation output level of each node
@@ -13,34 +12,13 @@ def sigmoid(x):
     return 1 / (1 + np.e ** -x)
 activation_function = sigmoid
 
-
-'''
-Truncated Normal Distribution Function
-https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.truncnorm.html
-
-truncnorm(a,b,loc, scale)
-a,b >> the upper and lower bounds, calculated by:
-    a = (desired lower bound - mean) / standard deviation
-    b = (desired upper bound - mean) / standard deviation
-
-loc >> shifts the distribution:
-    Set it to the mean to center it
-
-scale >> scales the distribution
-'''
 def truncated_normal(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, 
                      (upp - mean) / sd, 
                      loc=mean, 
                      scale=sd)
 
-#Convert letter labels to alphanumeric characters
-def valueToChar(i):
-    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-    return letters[i]
-
-
-class NeuralNetwork:
+class NeuralNet:
     
     def __init__(self, 
                  no_of_in_nodes, 
@@ -52,37 +30,22 @@ class NeuralNetwork:
         self.no_of_hidden_nodes = no_of_hidden_nodes
         self.learning_rate = learning_rate 
         self.create_weight_matrices()
-
-    def set_learning_rate(self, learning_rate):
-        self.learning_rate = learning_rate
         
     def create_weight_matrices(self):
-        """ 
-        Initializes the weight 
-        matrices of the neural network
-
-        X is a truncated normal distribution,
-        bounded between +/- 1/sqrt(# of input/hidden nodes)
-
-        X.rvs(M,N) generates a 2D array (M arrays of N length each)
-        from the normal distribution specified above
-        
-        Questions:
-            - Why choose the bounds for the weights as a function of the # of nodes?
-            - How exactly do the weights look in the structure of the NN?            
-        
-        """
         rad = 1 / np.sqrt(self.no_of_in_nodes)
         X = truncated_normal(mean=0, sd=1, low=-rad, upp=rad)
 
-        #WIH == Weight of Inner, Hidden Nodes??
+        #WIH == Weight of Inner, Hidden Nodes(?)
         self.wih = X.rvs((self.no_of_hidden_nodes, self.no_of_in_nodes))
         
         rad = 1 / np.sqrt(self.no_of_hidden_nodes)
         X = truncated_normal(mean=0, sd=1, low=-rad, upp=rad)
 
-        #WHO == Weight of Hidden, Outer Nodes??
+        #WHO == Weight of Hidden, Outer Nodes(?)
         self.who = X.rvs((self.no_of_out_nodes, self.no_of_hidden_nodes))
+
+    def set_learning_rate(self, learning_rate):
+        self.learning_rate = learning_rate        
         
     
     def train(self, input_vector, target_vector):
@@ -113,8 +76,6 @@ class NeuralNetwork:
         tmp = hidden_errors * output_hidden * (1.0 - output_hidden)
         self.wih += self.learning_rate * np.dot(tmp, input_vector.T)
 
-
-
     def run(self, input_vector):
 
         # input_vector can be tuple, list or ndarray
@@ -128,52 +89,9 @@ class NeuralNetwork:
     
         return output_vector
 
-#---------------------------------------
-#Rest of this stuff is for presentation:
-#---------------------------------------
+    def equals(self, NN):
+        return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
 
-
-            
-    #TODO For mixed sets, show which letters / numbers get confused for numbers / letters
-    def confusion_matrix(self, data_array, labels):
-        cm = np.zeros((10, 10), int)
-        for i in range(len(data_array)):
-            res = self.run(data_array[i])
-            res_max = res.argmax()
-            target = labels[i][0]
-            cm[res_max, int(target)] += 1
-        return cm
-
-    def meta_confusion_matrix(self, subNN, data, labels, values):
-        '''
-            Some digits get confused for letters. Some letters get confused for digits
-            
-            The meta gets labels (0,1) for numbers/letters, but we also need access to to the "real" labels of what is being represented
-
-
-        '''
-        mistakenDigits = np.zeros((10, 26), int)
-        mistakenLetters = np.zeros((26, 10), int)
-        for i in range(len(data)):
-            res = self.run(subNN.run(data[i]))
-            res_max = res.argmax()
-            target = labels[i][0]
-            cm[res_max, int(target)] += 1
-        return cm
-            
-            
-
-    def precision(self, label, confusion_matrix):
-        col = confusion_matrix[:, label]
-        return confusion_matrix[label, label] / col.sum()
-    
-    def recall(self, label, confusion_matrix):
-        row = confusion_matrix[label, :]
-        return confusion_matrix[label, label] / row.sum()
-        
-    
-    #This can't be used for Meta, because the input data is actually pre-processed by another NN first
-    #Use metaEval instead
     def evaluate(self, data, labels):
         corrects, wrongs = 0, 0
         for i in range(len(data)):
@@ -185,16 +103,13 @@ class NeuralNetwork:
                 wrongs += 1
         return corrects, wrongs
 
-    def metaEval(self, subNN, data, labels):
-        corrects, wrongs = 0, 0
-        for i in range(len(data)):
-            res = self.run(np.sort(subNN.run(data[i]).T))
-            res_max = res.argmax()
-            if res_max == labels[i]:
-                corrects += 1
-            else:
-                wrongs += 1
-        return corrects, wrongs
 
-    def equals(self, NN):
-        return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
+'''
+create_weight_matrices generates a randomized weight matrix, and is called at initialization
+
+set_learning_rate allows you to modify the learning rate after the NN is already initialized
+    -> you also specify a learning rate when you first initialize the NN
+
+train and run operate on a single input (plus label, in the case of train)
+run is the only one that gives an output vector
+'''
