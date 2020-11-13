@@ -110,6 +110,7 @@ class NeuralNetwork:
         self.who += tmp
 
 
+
         # calculate hidden errors:
         hidden_errors = np.dot(self.who.T, output_errors)
         # update the weights:
@@ -128,7 +129,10 @@ class NeuralNetwork:
 
         output_vector = np.dot(self.who, output_vector)
         output_vector = activation_function(output_vector)
-
+        with open("wih_init.txt", "wb") as fp:   #Pickling
+            pickle.dump(self.wih, fp)
+        with open("who_init.txt", "wb") as fp:   #Pickling
+            pickle.dump(self.who, fp)
         return output_vector
 
 #---------------------------------------

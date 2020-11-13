@@ -125,8 +125,8 @@ def train(NN):
     #Display Statistics for Digits
     corrects, wrongs = Digit_NN.evaluate(digits_train_imgs_u, digits_train_labels)
     print("digit accuracy train: ", corrects / ( corrects + wrongs))
-    corrects, wrongs = Digit_NN.evaluate(digits_test_imgs_u, digits_test_labels)
-    print("digit accuracy test:", corrects / ( corrects + wrongs))
+    #corrects, wrongs = Digit_NN.evaluate(digits_test_imgs_u, digits_test_labels)
+    #print("digit accuracy test:", corrects / ( corrects + wrongs))
 
     #Train MetaNN, save NN output vectors to be evaluated later
     #for i in range(len(mixed_train_imgs)):
@@ -158,7 +158,7 @@ def test(iterations):
         #print(NeuralNetwork.output_hidden)
 
 splicer("u")
-test(100)
+test(3)
 
 
 
