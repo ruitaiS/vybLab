@@ -9,14 +9,15 @@ emnist_test_labels = []
 
 print("loading")
 for d in np.genfromtxt('emnist_test.csv', delimiter=','):
-    emnist_test_labels.append(d[1])
+    emnist_test_labels.append(int(d[0]))
     emnist_test_images.append(d[1:])
 
 for d in np.genfromtxt('emnist_train.csv', delimiter=','):
-    emnist_train_labels.append(d[1])
+    emnist_train_labels.append(int(d[0]))
     emnist_train_images.append(d[1:])
 
 print("saving")
+
 #Pickle the data so we can load it later. 
 pickle.dump(emnist_test_images, open("emnist_test_imgs.p", 'wb'))
 pickle.dump(emnist_test_labels, open("emnist_test_labels.p", 'wb'))

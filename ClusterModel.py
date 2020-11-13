@@ -19,8 +19,8 @@ def tanh(x):
 activation_function = sigmoid
 
 #Helper method to convert to one hot. 
-def to_one_hot(n): 
-    r = np.zeros(10)
+def to_one_hot(n, size=10): 
+    r = np.zeros(size)
     r[int(n)] = 1.0
     return r
 
@@ -120,7 +120,7 @@ class NeuralNetwork:
 
 
 class ClusterModel: 
-    def __init__(self, number_of_labels):
+    def __init__(self, number_of_labels=20):
         self.sub_net = NeuralNetwork(no_of_in_nodes = image_pixels, 
                         no_of_out_nodes = number_of_labels, 
                         no_of_hidden_nodes = 60,
@@ -134,6 +134,7 @@ class ClusterModel:
 
     #Train the sub networks. data is a list of ((image, is_char), lab) lab is an int
     #The subnetworks predict, and detect when we have something new to add to the clustering algorithm.
+    #DO NOT USE THIS UNLESS YOU SPECIFICALLY NEED TO, you can just use train and run below. 
     def train_sub_networks(self, data):
         print("Trainig sub-networks.")
         for d in data: 
@@ -158,3 +159,22 @@ class ClusterModel:
         self.subnet_confusion_matrix = np.array([x/l for x in self.subnet_confusion_matrix.reshape(4)]).reshape((2,2))
         print("Done training, Confusion Matrix:")
         print(self.subnet_confusion_matrix)
+
+    #Train the model with the bit of input data. Returns prediction before training. 
+    def train(self, data, label, meta_label):  #meta: 0 if seen before, 1 otherwise.
+        result = self.sub_net.run(data).flatten()
+        meta_result = self.super_network.run(result)
+        self.sub_net.train(data, to_one_hot(label, size=self.sub_net.no_of_out_nodes))
+        self.super_network.train(result, to_one_hot(meta_label, size=self.super_network.no_of_out_nodes))
+        if np.argmax(meta_result) == 1: #We have seen it before, return the result of sub network. 
+            return (np.argmax(result), 1)
+        else:                           #we have not seen it before go to alternate calssification method
+            return (np.argmax(result), 0) #TODO: Implement clustering algorithm as alternate method. 
+
+    def run(self, data, label, meta_label): #meta: 0 if seen before, 1 otherwise.
+        result = self.sub_net.run(data).flatten()
+        meta_result = self.super_network.run(result)
+        if np.argmax(meta_result) == 1: #We have seen it before, return the result of sub network. 
+            return (np.argmax(result), 1)
+        else:                           #we have not seen it before go to alternate calssification method
+            return (np.argmax(result), 0) #TODO: Implement clustering algorithm as alternate method. 
