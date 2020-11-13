@@ -33,7 +33,7 @@ class MetaNet:
     '''
 
     def generateChild(self, training_set, training_label):
-        child = NeuralNet(no_of_in_nodes = data.image_pixels,
+        child = NeuralNet(no_of_in_nodes = 28*28,
             #Output vector size is equal to vector size of current network
             #As we create new categories each "generation" of network will have more outnodes
             no_of_out_nodes = len(self.run(training_set[0])), 
