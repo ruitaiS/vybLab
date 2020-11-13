@@ -92,6 +92,17 @@ class NeuralNet:
     def equals(self, NN):
         return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
 
+    def evaluate(self, data, labels):
+        corrects, wrongs = 0, 0
+        for i in range(len(data)):
+            res = self.run(data[i])
+            res_max = res.argmax()
+            if res_max == labels[i]:
+                corrects += 1
+            else:
+                wrongs += 1
+        return corrects, wrongs
+
 
 '''
 create_weight_matrices generates a randomized weight matrix, and is called at initialization

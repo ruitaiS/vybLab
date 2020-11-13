@@ -23,18 +23,18 @@ class MetaNet:
 
     
 
-    def generateChild(self, training_set):
+    def generateChild(parent, training_set):
         child = NeuralNet(no_of_in_nodes = image_pixels,
 
             #Output vector size is equal to vector size of current network
             #As we create new categories each "generation" of network will have more outnodes
-            no_of_out_nodes = len(self.run(training_set[0])), 
+            no_of_out_nodes = len(parent.run(training_set[0])), 
             no_of_hidden_nodes = 100,
             learning_rate = 0.1)
         for i in range(0, len(training_set)):
             #Child sees the training image, but the parent network decides what the label should be
             #child network never actually sees the 'real' label (and neither does the parent)
-            child.train(training_set[i], np.argmax(self.run(training_set[i])))
+            child.train(training_set[i], np.argmax(parent.run(training_set[i])))
         return child
 
 
