@@ -15,11 +15,8 @@ class MetaNet:
     #Implemented in Sean's Code
     '''
     def train(self, input_vector, target_vector):
-    
     def trainSubNet(self, input_vector, target_vector):
-
     def run(self, input_vector):
-
     def equals(self, NN):
     '''
 
@@ -96,11 +93,8 @@ class MetaNet:
             #TODO: return result from clustering algorithm instead.
             return np.argmax(result)    
     
-
     def setSubNet(self, subNet):
-        self.subNet = subNet
-
-    
+        self.subNet = subNet    
 
     def generateChild(self, training_set, training_label):
         child = NeuralNet(no_of_in_nodes = 28*28,

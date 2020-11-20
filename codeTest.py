@@ -1,10 +1,14 @@
 import numpy as np
 from NN import NeuralNet
 from data import Data
-
 data = Data()
 
+'''
+Testing Code Fragments
+'''
+
 #convert (integer) label into one-hot format
+#Used in metaNN
 def oneHot(label, no_categories):
     res = np.full(no_categories,0.01)
     res[int(label)] = 0.99
@@ -86,4 +90,4 @@ def testOneHot():
         print("Generated OneHot: " + str(oneHot(data.digits_train_labels[i], 10)))
 
 #testOneHot()
-testGenerateChild()
+#testGenerateChild()

@@ -45,8 +45,7 @@ class NeuralNet:
         self.who = X.rvs((self.no_of_out_nodes, self.no_of_hidden_nodes))
 
     def set_learning_rate(self, learning_rate):
-        self.learning_rate = learning_rate        
-        
+        self.learning_rate = learning_rate         
     
     def train(self, input_vector, target_vector):
         """
