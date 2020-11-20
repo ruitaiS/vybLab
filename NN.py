@@ -63,17 +63,20 @@ class NeuralNet:
         output_network = activation_function(output_vector2)
         
         output_errors = target_vector - output_network
+
+
         # update the weights:
         tmp = output_errors * output_network * (1.0 - output_network)     
         tmp = self.learning_rate  * np.dot(tmp, output_hidden.T)
         self.who += tmp
-
 
         # calculate hidden errors:
         hidden_errors = np.dot(self.who.T, output_errors)
         # update the weights:
         tmp = hidden_errors * output_hidden * (1.0 - output_hidden)
         self.wih += self.learning_rate * np.dot(tmp, input_vector.T)
+
+        return output_network
 
     def run(self, input_vector):
 

@@ -6,8 +6,7 @@ import math
 from scipy.stats import truncnorm
 
 #TODO: These imports don't work/exist
-from NN import NeuralNetworkPipe
-from ClusterModel import ClusterModel
+from metaNN import MetaNet
 
 from data import Data
 
@@ -35,7 +34,7 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
         Loads the training sets for characters and numbers
         TODO: Refactor so it's in the data class, & you can just specify what kind of data you want
 
-        
+
 
 
     '''
@@ -80,8 +79,10 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
     accuracy = []
     meta_accuracy = []
 
-    print("Phase 1 training. (Only on characters.)")
-    for data in chars:
+    #TODO: When you train only on numbers, the meta never has an instance where it needs to output 1 (eg. that it's a character)
+    #This is a problem.
+    print("Phase 1 training. (Only on Numbers.)")
+    for data in nums:
         #data of the form (data, label, meta_label)
         (img, lab, meta_lab) = data
         (result, meta_result) = model.train(img, lab, meta_lab)
@@ -98,10 +99,11 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
         else: 
             accuracy.append(0)
     
-    print("Phase 2 training. (On both characters and numbers.)")
+    #TODO: Half of this data (the numbers) are reused from phase 1
+    print("Phase 2: Testing. (On both characters and numbers.)")
     for data in combined_data:
         (img, lab, meta_lab) = data
-        (result, meta_result) = model.train(img, lab, meta_lab)
+        (result, meta_result) = model.run(img, lab, meta_lab)
 
         #TODO: The results from both phases go into the same array?
         #Update the meta accuracy
@@ -129,5 +131,5 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
 
 #Initialize model and run tests
 #TODO: Clustermodel doesn't exist; switch to metaNN
-model = ClusterModel(number_of_labels=37)
+model = MetaNet()
 test_model(model)

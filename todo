@@ -10,4 +10,7 @@ tester.py:
     Refactor so it's not just one big "test_model" function
         seperate data parsing (probably goes into data.py), training, testing, display into their own functions
 
+    tester phase 1 only trains on numbers, so meta never produces a 1
+    phase 2 retrains, with half of the data it's already seen before
+
 

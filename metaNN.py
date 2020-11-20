@@ -12,14 +12,6 @@ def oneHot(label, no_categories):
 
 class MetaNet:
 
-    #Implemented in Sean's Code
-    '''
-    def train(self, input_vector, target_vector):
-    def trainSubNet(self, input_vector, target_vector):
-    def run(self, input_vector):
-    def equals(self, NN):
-    '''
-
     def __init__(self, number_of_subnet_labels=10):
         self.sub_net = NeuralNet(no_of_in_nodes = 28*28, 
                         no_of_out_nodes = number_of_subnet_labels, 
@@ -36,45 +28,16 @@ class MetaNet:
         #self.data_points = np.array([]) #TODO: Used by clustering algorithms
         #self.subnet_confusion_matrix = np.zeros((2, 2)) #[Predicted, Actuial]
 
-    '''
-    #Train the sub networks. data is a list of ((image, is_char), lab) lab is an int
-    #The subnetworks predict, and detect when we have something new to add to the clustering algorithm.
-    #DO NOT USE THIS UNLESS YOU SPECIFICALLY NEED TO, you can just use train and run below. 
-    def train_sub_networks(self, data):
-        print("Trainig sub-networks.")
-        for d in data: 
-            ((img, is_char), lab) = d
-            if is_char: 
-                t = self.sub_net.run(img)
-                s = self.super_net.predict(t.flatten(), [0.0, 1.0])
-                #Update the confusion matrix. 
-                if np.argmax(s) == 1: 
-                    self.subnet_confusion_matrix[1, 1] += 1
-                else: 
-                    self.subnet_confusion_matrix[0, 1] += 1
-            else: 
-                t = self.sub_net.predict(img, to_one_hot(lab))
-                s = self.super_net.predict(t.flatten(), [1.0, 0.0])
-                #Update the confusion matrix. 
-                if np.argmax(s) == 1: 
-                    self.subnet_confusion_matrix[1, 0] += 1
-                else: 
-                    self.subnet_confusion_matrix[0, 0] += 1
-        l = len(data)
-        self.subnet_confusion_matrix = np.array([x/l for x in self.subnet_confusion_matrix.reshape(4)]).reshape((2,2))
-        print("Done training, Confusion Matrix:")
-        print(self.subnet_confusion_matrix)
-    '''
 
     #Train the model with the bit of input data. 
     #Returns prediction for (img_label, meta_label) as tuple, before training. 
     def train(self, img, img_label, meta_label):  #meta: 0 if seen before, 1 otherwise.
-        result = self.sub_net.run(img).flatten()
-        meta_result = self.super_net.run(result)
 
         #Train Sub and Meta Networks
-        self.sub_net.train(img, oneHot(img_label, self.sub_net.no_of_out_nodes))
-        self.super_net.train(result, oneHot(meta_label, self.super_net.no_of_out_nodes))
+        #Training will also return the pre-training prediction
+        
+        result = self.sub_net.train(img, oneHot(img_label, self.sub_net.no_of_out_nodes))
+        meta_result = self.super_net.train(result, oneHot(meta_label, self.super_net.no_of_out_nodes))
 
         #Return prediction result tuple
         if np.argmax(meta_result) == 1: #We have seen it before, return the result of sub network. 

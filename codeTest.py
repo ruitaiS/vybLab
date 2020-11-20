@@ -85,33 +85,23 @@ def testOneHot():
         print("OneHot: " + str(data.digits_train_labels_one_hot[i]))
         print("Generated OneHot: " + str(oneHot(data.digits_train_labels[i], 10)))
 
-def whatsThis():
+def dataSizes():
     data = Data()
-    num_train_imgs = data.digits_train_imgs
-    num_train_labels = data.digits_train_labels
-    char_train_imgs = data.letters_train_imgs
-    char_train_labels = data.letters_train_labels
+    print(len(data.digits_train_imgs))
+    print(len(data.digits_test_imgs))
+    print(len(data.digits_train_labels))
+    print(len(data.digits_test_labels))
+    print(len(data.digits_train_labels_one_hot))
+    print(len(data.digits_test_labels_one_hot))
 
-    #Offset char labels so that 
-    # Digits: 0-9, characters:10-36
-    char_train_labels = [i + 10 for i in char_train_labels]  
-
-    is_char = [1 for i in range(len(char_train_imgs))]
-    is_num = [0 for i in range(len(num_train_imgs))]
-
-    #Create a list of tuples (img, label, is_char) for each image
-    chars = list(zip(char_train_imgs, np.array(char_train_labels), is_char))
-
-    print(np.array(char_train_labels))
-
-
-    nums = list(zip(np.array(num_train_imgs)[:,1:], np.array(num_train_labels), is_num))
-
-
-    combined_data = list(chars + nums)
-
-    #print(combined_data[10])
+    print(len(data.letters_train_imgs))
+    print(len(data.letters_test_imgs))
+    print(len(data.letters_train_labels))
+    print(len(data.letters_test_labels))
+    print(len(data.letters_train_labels_one_hot))
+    print(len(data.letters_test_labels_one_hot))      
+    
 
 #testOneHot()
 #testGenerateChild()
-whatsThis()
+dataSizes()
