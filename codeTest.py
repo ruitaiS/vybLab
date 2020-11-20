@@ -1,11 +1,6 @@
 import numpy as np
 from NN import NeuralNet
 from data import Data
-data = Data()
-
-'''
-Testing Code Fragments
-'''
 
 #convert (integer) label into one-hot format
 #Used in metaNN
@@ -53,7 +48,7 @@ def generateChild(parent, training_set, training_label, training_label_one_hot):
 
 
 def testGenerateChild():
-
+    data = Data()
     parent = NeuralNet(no_of_in_nodes = data.image_pixels, 
         no_of_out_nodes = 10, 
         no_of_hidden_nodes = 100,
@@ -84,10 +79,39 @@ def testGenerateChild():
     print("Child2 Test Accuracy: ", corrects / ( corrects + wrongs))
 
 def testOneHot():
+    data = Data()
     for i in range(len(data.digits_train_labels)):
         print("Regular: " + str(data.digits_train_labels[i]))
         print("OneHot: " + str(data.digits_train_labels_one_hot[i]))
         print("Generated OneHot: " + str(oneHot(data.digits_train_labels[i], 10)))
 
+def whatsThis():
+    data = Data()
+    num_train_imgs = data.digits_train_imgs
+    num_train_labels = data.digits_train_labels
+    char_train_imgs = data.letters_train_imgs
+    char_train_labels = data.letters_train_labels
+
+    #Offset char labels so that 
+    # Digits: 0-9, characters:10-36
+    char_train_labels = [i + 10 for i in char_train_labels]  
+
+    is_char = [1 for i in range(len(char_train_imgs))]
+    is_num = [0 for i in range(len(num_train_imgs))]
+
+    #Create a list of tuples (img, label, is_char) for each image
+    chars = list(zip(char_train_imgs, np.array(char_train_labels), is_char))
+
+    print(np.array(char_train_labels))
+
+
+    nums = list(zip(np.array(num_train_imgs)[:,1:], np.array(num_train_labels), is_num))
+
+
+    combined_data = list(chars + nums)
+
+    #print(combined_data[10])
+
 #testOneHot()
 #testGenerateChild()
+whatsThis()

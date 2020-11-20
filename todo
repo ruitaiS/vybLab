@@ -1,0 +1,13 @@
+Goal for Tonight:
+    Get metaNN working with Tester
+
+Tomorrow:
+    Refactor / update tester.py
+
+tester.py:
+    merge redundant data parsing w/ data.py
+    Add testing only sets (no training)
+    Refactor so it's not just one big "test_model" function
+        seperate data parsing (probably goes into data.py), training, testing, display into their own functions
+
+

@@ -4,90 +4,112 @@ import matplotlib.pyplot as plt
 import pickle
 import math
 from scipy.stats import truncnorm
+
+#TODO: These imports don't work/exist
 from NN import NeuralNetworkPipe
 from ClusterModel import ClusterModel
 
-#Parameters for the data we are working with. 
-image_size = 28 # width and length
-labels = [0,1,2,3,4,5,6,7,8,9]
-image_pixels = image_size * image_size
-data_path = "data/mnist/"
+from data import Data
 
-#The model definitions.
 #Dummy model used for testing the tester. 
 class DummyModel: 
+    labels = [0,1,2,3,4,5,6,7,8,9] 
     def __init__(self): 
         pass
 
-    def predict(self, data, label): 
-        return random.choice(labels)
+    def predict(self, data, label):
+        return random.choice(self.labels)
 
-#A epsilon greedy action selection. 
-def sigmoid(x):
-    return 1 / (1 + np.e ** -x)
-activation_function = sigmoid
+#TODO: Write this out
+def updateConfMatrix(curr, data, result):
+    #Takes the current confusion matrix, looks at the data the model was fed, and the result the model got back
+    #Updates entries in confusion matrix and returns them
+    return True
 
-def truncated_normal(mean=0, sd=1, low=0, upp=10):
-    return truncnorm((low - mean) / sd, 
-                     (upp - mean) / sd, 
-                     loc=mean, 
-                     scale=sd)
 
-def test_model(model, plot_title="Accuracy Over Time", window_size=1000): 
-    #Prepair the training data.
-    data_path = "data/mnist/"
-    char_path = "data/emnist/"
+def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
+    '''
+        model = metaNN
+        TODO: This doesn't actually include the alternate classifier yet, only subnet and metaNet
 
-    print("Loading data.")
-    #Load the data into memory. 
-    num_train_imgs = pickle.load(open( data_path + 'train_imgs.p', "rb" ))
-    num_train_labels = pickle.load(open( data_path + 'train_labels.p', "rb" ))
-    char_train_imgs = pickle.load(open( char_path + 'emnist_train_imgs.p', "rb" ))
-    char_train_labels = pickle.load(open( char_path + 'emnist_train_labels.p', "rb" ))
+        Loads the training sets for characters and numbers
+        TODO: Refactor so it's in the data class, & you can just specify what kind of data you want
 
-    char_train_labels = [i + 10 for i in char_train_labels] #Digits: 1-9, Characters:10-36 
+        
 
+
+    '''
+
+
+
+    print("Preparing data.")
+    #Load the data into memory.
+    data = Data()
+    num_train_imgs = data.digits_train_imgs
+    num_train_labels = data.digits_train_labels
+    char_train_imgs = data.letters_train_imgs
+    char_train_labels = data.letters_train_labels
+
+    #Offset char labels so that 
+    # Digits: 0-9, characters:10-36
+    char_train_labels = [i + 10 for i in char_train_labels]  
+
+    #Create a list of 1s for the characters, 0's for the numbers
     is_char = [1 for i in range(len(char_train_imgs))]
     is_num = [0 for i in range(len(num_train_imgs))]
+
+    #TODO: Ask Sean
+    #I think this creates a (img, label, is_char) tuple for each entry
+    #Why np.array(char_train_labels)? (Maybe for later on?)
+    #Also what is going on for num_train_imgs?
     chars = list(zip(char_train_imgs, np.array(char_train_labels), is_char))
-    numbs = list(zip(np.array(num_train_imgs)[:,1:], np.array(num_train_labels), is_num))
-    combined_data = list(chars + numbs)
+    nums = list(zip(np.array(num_train_imgs)[:,1:], np.array(num_train_labels), is_num))
+
+    combined_data = list(chars + nums)
+
     random.shuffle(combined_data)
     random.shuffle(chars)
-    random.shuffle(numbs)
-    #data of the form (data, label, meta_label)
-
-    #model.train_sub_networks(training_data)
-
-    #Initially train the model without any characters. 
+    random.shuffle(nums)
+    
+    #Training Phase
+    #TODO: Ask sean - No test only phase?
+    
+    #Record accuracies
+    #It needs to be in an array for the grapher
+    #accuracy[i] = 1 if data[i] was correctly classified; else 0
     accuracy = []
     meta_accuracy = []
+
     print("Phase 1 training. (Only on characters.)")
-    for d in chars:
-        (img, lab, meta_lab) = d
+    for data in chars:
+        #data of the form (data, label, meta_label)
+        (img, lab, meta_lab) = data
         (result, meta_result) = model.train(img, lab, meta_lab)
-        #Test the meta accuracy
+
+        #Update the meta accuracy
         if np.argmax(meta_result) == meta_lab: 
             meta_accuracy.append(1)
         else: 
             meta_accuracy.append(0)
-        #Test the subnet accuracy. 
+
+        #Update the subnet accuracy. 
         if np.argmax(result) == lab: 
             accuracy.append(1)
         else: 
             accuracy.append(0)
     
-    #Add in the numbers and see if we can classify them. 
     print("Phase 2 training. (On both characters and numbers.)")
-    for d in combined_data:
-        (img, lab, meta_lab) = d
+    for data in combined_data:
+        (img, lab, meta_lab) = data
         (result, meta_result) = model.train(img, lab, meta_lab)
-        #Test the meta accuracy
+
+        #TODO: The results from both phases go into the same array?
+        #Update the meta accuracy
         if np.argmax(meta_result) == meta_lab: 
             meta_accuracy.append(1)
         else: 
             meta_accuracy.append(0)
-        #Test the subnet accuracy. 
+        #Update the subnet accuracy. 
         if np.argmax(result) == lab: 
             accuracy.append(1)
         else: 
@@ -104,5 +126,8 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
     plt.title(plot_title)
     plt.show()
 
+
+#Initialize model and run tests
+#TODO: Clustermodel doesn't exist; switch to metaNN
 model = ClusterModel(number_of_labels=37)
 test_model(model)

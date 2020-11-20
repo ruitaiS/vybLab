@@ -39,7 +39,7 @@ class Data:
         self.letters_train_labels_one_hot = data[4]
         self.letters_test_labels_one_hot = data[5]
 
-
+    def generateMixedSet(self):
         #TODO Ensure this way of splitting is methodologically sound
 
         #Labels are 0, 1 of whether something is a digit or letter
@@ -83,6 +83,7 @@ class Data:
         self.digits_test_labels = self.digits_test_labels[:5000]
         self.letters_test_labels = self.letters_test_labels[:5000]
 
+    #TODO: Actually do this lol
     def shuffle(self, dataset):
         print(dataset)
     #shuffles the specified dataset
