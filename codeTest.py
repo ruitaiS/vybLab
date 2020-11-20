@@ -11,6 +11,7 @@ def oneHot(label, no_categories):
 
 
 def generateChild(parent, training_set, training_label, training_label_one_hot):
+    data = Data()
     child1 = NeuralNet(no_of_in_nodes = data.image_pixels,
         #Output vector size is equal to vector size of current network
         #As we create new categories each "generation" of network will have more outnodes
@@ -104,4 +105,4 @@ def dataSizes():
 
 #testOneHot()
 #testGenerateChild()
-dataSizes()
+#dataSizes()
