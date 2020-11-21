@@ -1,5 +1,10 @@
 import numpy as np
 from scipy.stats import truncnorm
+import pickle
+import pandas as pd
+from scipy.cluster.vq import vq, kmeans2, whiten
+from statistics import mode
+
 
 #Parameters for the data we are working with. 
 image_size = 28 # width and length
@@ -23,6 +28,9 @@ def to_one_hot(n, size=10):
     r = np.zeros(size)
     r[int(n)] = 1.0
     return r
+
+def from_one_hot(v): 
+    return np.argmax(v)
 
 def truncated_normal(mean=0, sd=1, low=0, upp=10):
     return truncnorm((low - mean) / sd, 
@@ -118,9 +126,45 @@ class NeuralNetwork:
     
         return output_vector
 
+def euclidian_distance(a, b): 
+        dist = np.linalg.norm(a-b)
+        return dist
+
+class Classifier:
+    #Initialize the clustering algorithm. 
+    def __init__(self, one_hot_function = to_one_hot, one_hot_inverse_function = from_one_hot):
+        #Initialize the list of known points. 
+        self.data_points = []
+        self.one_hot_function = one_hot_function
+        self.one_hot_inverse_function = one_hot_inverse_function
+    
+    def train(self, input_vector, target_vector): 
+        #target_vector = self.one_hot_inverse_function(target_vector) #Convert the label from one hot. UNCOMMENT THIS IF THE INPUT IS A VECTOR. 
+        t = self.run(input_vector) #Run the input vector through the model before we add it. 
+        #Add this vector to the database. 
+        entry = [target_vector] + list(input_vector)
+        self.data_points.append(entry)
+        return t
+
+    def run(self, input_vector):
+        #Only run the clustering algorithm if we have enough data. 
+        if len(self.data_points) == 0: 
+            return None
+        #Get the k nearest neighbors. 
+        labs =  [i[0] for i in self.data_points]
+        points = [i[1:] for i in self.data_points]
+        centroids, labels  = kmeans2(points, len(labs), minit='points')
+        #Take return the nearest mean.
+        res = np.argmax([euclidian_distance(input_vector, i) for i in centroids])
+        #Find the label that belongs to that centroid. 
+        candidates = []
+        for (i, j) in zip(self.data_points, labels): 
+            if j == res: 
+                candidates.append(i[0])
+        return mode(candidates)
 
 class ClusterModel: 
-    def __init__(self, number_of_labels=20):
+    def __init__(self, number_of_labels=37):
         self.sub_net = NeuralNetwork(no_of_in_nodes = image_pixels, 
                         no_of_out_nodes = number_of_labels, 
                         no_of_hidden_nodes = 60,
@@ -129,8 +173,8 @@ class ClusterModel:
                         no_of_out_nodes = 2, 
                         no_of_hidden_nodes = 15,
                         learning_rate = 0.1)
-        self.data_points = np.array([])
         self.subnet_confusion_matrix = np.zeros((2, 2)) #[Predicted, Actuial]
+        self.clustering_algorithm = Classifier()
 
     #Train the sub networks. data is a list of ((image, is_char), lab) lab is an int
     #The subnetworks predict, and detect when we have something new to add to the clustering algorithm.
@@ -169,7 +213,7 @@ class ClusterModel:
         if np.argmax(meta_result) == 1: #We have seen it before, return the result of sub network. 
             return (np.argmax(result), 1)
         else:                           #we have not seen it before go to alternate calssification method
-            return (np.argmax(result), 0) #TODO: Implement clustering algorithm as alternate method. 
+            return (self.clustering_algorithm.train(data, label), 0) 
 
     def run(self, data, label, meta_label): #meta: 0 if seen before, 1 otherwise.
         result = self.sub_net.run(data).flatten()
@@ -177,4 +221,4 @@ class ClusterModel:
         if np.argmax(meta_result) == 1: #We have seen it before, return the result of sub network. 
             return (np.argmax(result), 1)
         else:                           #we have not seen it before go to alternate calssification method
-            return (np.argmax(result), 0) #TODO: Implement clustering algorithm as alternate method. 
+            return (self.clustering_algorithm.run(data, label), 0)

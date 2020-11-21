@@ -49,21 +49,20 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
 
     is_char = [1 for i in range(len(char_train_imgs))]
     is_num = [0 for i in range(len(num_train_imgs))]
-    chars = list(zip(char_train_imgs, np.array(char_train_labels), is_char))
+    chars = list(zip(np.array(char_train_imgs), np.array(char_train_labels), is_char))
     numbs = list(zip(np.array(num_train_imgs)[:,1:], np.array(num_train_labels), is_num))
     combined_data = list(chars + numbs)
     random.shuffle(combined_data)
     random.shuffle(chars)
     random.shuffle(numbs)
-    #data of the form (data, label, meta_label)
 
-    #model.train_sub_networks(training_data)
+    #data of the form (data, label, meta_label)
 
     #Initially train the model without any characters. 
     accuracy = []
     meta_accuracy = []
     print("Phase 1 training. (Only on characters.)")
-    for d in chars:
+    for d in chars[:200]:
         (img, lab, meta_lab) = d
         (result, meta_result) = model.train(img, lab, meta_lab)
         #Test the meta accuracy
@@ -79,7 +78,7 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
     
     #Add in the numbers and see if we can classify them. 
     print("Phase 2 training. (On both characters and numbers.)")
-    for d in combined_data:
+    for d in combined_data[-200:]:
         (img, lab, meta_lab) = d
         (result, meta_result) = model.train(img, lab, meta_lab)
         #Test the meta accuracy
@@ -104,5 +103,5 @@ def test_model(model, plot_title="Accuracy Over Time", window_size=1000):
     plt.title(plot_title)
     plt.show()
 
-model = ClusterModel(number_of_labels=37)
-test_model(model)
+model = ClusterModel(number_of_labels=37, )
+test_model(model, window_size=20)
