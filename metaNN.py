@@ -9,7 +9,6 @@ def oneHot(label, no_categories):
     res[int(label)] = 0.99
     return res
 
-
 class MetaNet:
 
     #TODO: Think about how to generalize this so that it can be built up
@@ -29,22 +28,23 @@ class MetaNet:
                         no_of_hidden_nodes = 60,
                         learning_rate = 0.1)
 
+    #superNet is the core of the MetaNet instance, but sub and alter can be swapped out
     def setSubNet(self, subNet):
         self.subNet = subNet
 
     def setAlterNet(self, alterNet):
         self.alterNet = alterNet
 
-    #Trains subnet on a single instance; returns prediction for label
+    #Single Instance Training; returns predictions before altering weights
     def trainSubNet(self, img, label):
         return np.argmax(self.subNet.train(img, oneHot(label, self.subNet.no_of_out_nodes)))
 
-    #Train the alternative net on letters
+    #TODO: May become defunct if alternet is designed to cluster (eg. learn unsupervised)
     def trainAlterNet(self, img, label):
         return np.argmax(self.alterNet.train(img, oneHot(label, self.alterNet.no_of_out_nodes)))
 
-    #Train the model with the bit of input data. 
-    #Returns prediction for (img_label, meta_label) as tuple, before training. 
+    #Train super with the bit of input data. 
+    #Returns prediction as (img_label, meta_label) tuple
     def trainSuperNet(self, img, img_label, meta_label): 
 
         #Alternatively: Train subnet only if it's a digit
@@ -59,6 +59,7 @@ class MetaNet:
         else:
             return (np.argmax(self.alterNet.run(img)), 0)
 
+    #Return result without altering weights
     def run(self, img):
         subNet_outVector = self.subNet.run(img).flatten()
         metaNet_outVector = self.superNet.run(subNet_outVector)

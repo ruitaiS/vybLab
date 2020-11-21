@@ -1,5 +1,6 @@
 import numpy as np
 from NN import NeuralNet
+from metaNN import MetaNet
 from data import Data
 
 #convert (integer) label into one-hot format
@@ -8,7 +9,6 @@ def oneHot(label, no_categories):
     res = np.full(no_categories,0.01)
     res[int(label)] = 0.99
     return res
-
 
 def generateChild(parent, training_set, training_label, training_label_one_hot):
     data = Data()
@@ -46,7 +46,6 @@ def generateChild(parent, training_set, training_label, training_label_one_hot):
 
     print("Percentage Mislabelled: " + str(wrong/total))
     return child1, child2
-
 
 def testGenerateChild():
     data = Data()
@@ -101,6 +100,9 @@ def dataSizes():
     print(len(data.letters_test_labels))
     print(len(data.letters_train_labels_one_hot))
     print(len(data.letters_test_labels_one_hot))      
+    
+def testMeta():
+    meta = MetaNet()
     
 
 #testOneHot()
