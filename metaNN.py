@@ -2,13 +2,6 @@ import numpy as np
 from data import Data
 from NN import NeuralNet
 
-#Helper function for generateChild
-#converts (integer) label into one-hot format
-def oneHot(label, no_categories):
-    res = np.full(no_categories,0.01)
-    res[int(label)] = 0.99
-    return res
-
 class MetaNet:
 
     #TODO: Think about how to generalize this so that it can be built up
@@ -37,11 +30,11 @@ class MetaNet:
 
     #Single Instance Training; returns predictions before altering weights
     def trainSubNet(self, img, label):
-        return np.argmax(self.subNet.train(img, oneHot(label, self.subNet.no_of_out_nodes)))
+        return np.argmax(self.subNet.train(img, label))
 
     #TODO: May become defunct if alternet is designed to cluster (eg. learn unsupervised)
     def trainAlterNet(self, img, label):
-        return np.argmax(self.alterNet.train(img, oneHot(label, self.alterNet.no_of_out_nodes)))
+        return np.argmax(self.alterNet.train(img, label))
 
     #Train super with the bit of input data. 
     #Returns prediction as (img_label, meta_label) tuple
@@ -49,7 +42,7 @@ class MetaNet:
 
         #Alternatively: Train subnet only if it's a digit
         subNet_outVector = self.subNet.run(img)
-        metaNet_outVector = self.superNet.train(subNet_outVector, oneHot(meta_label, self.superNet.no_of_out_nodes))
+        metaNet_outVector = self.superNet.train(subNet_outVector, meta_label)
 
         #Return prediction result tuple
         #Use subnet prediction if super returns 1

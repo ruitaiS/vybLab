@@ -5,10 +5,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import truncnorm
 
-#Determines activation output level of each node
-#Layers are represented as NDArrays
-#function(NDArray) will apply the function to every element in the array & return a new one
+
+def oneHot(label, no_of_out_nodes):
+    #Converts an integer label to one-hot format
+    #Assumes that # of out nodes on NN = # of possible label values
+    res = np.full(no_of_out_nodes,0.01)
+    res[int(label)] = 0.99
+    return res
+
 def sigmoid(x):
+    #Determines activation output level of each node
+    #Layers are represented as NDArrays
+    #function(NDArray) will apply the function to every element in the array & return a new one
     return 1 / (1 + np.e ** -x)
 activation_function = sigmoid
 
@@ -47,11 +55,13 @@ class NeuralNet:
     def set_learning_rate(self, learning_rate):
         self.learning_rate = learning_rate         
     
-    def train(self, input_vector, target_vector):
+    def train(self, input_vector, label):
         """
         input_vector and target_vector can 
         be tuple, list or ndarray
         """
+
+        target_vector = oneHot(label, self.no_of_out_nodes)
         
         input_vector = np.array(input_vector, ndmin=2).T
         target_vector = np.array(target_vector, ndmin=2).T
@@ -94,6 +104,7 @@ class NeuralNet:
     def equals(self, NN):
         return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
 
+    #TODO: This may need fixing wrt labels post one-hot integration
     def evaluate(self, data, labels):
         corrects, wrongs = 0, 0
         for i in range(len(data)):
