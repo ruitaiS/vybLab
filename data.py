@@ -1,6 +1,35 @@
 import pickle
 import numpy as np
 
+'''
+(E)MNIST Full Set:
+    60k training digits
+    60k training letters
+    10k testing digits
+    10k testing letters
+
+Subnet Training Set (digits):
+    40k digits only (from training digits)
+
+Alternet Training Set (letters):
+    40k letters only (from training letters)
+
+Supernet Training Set (mixed):
+    40k mixed (remaining 20k from digits, 20k from letters)
+
+MetaNet Test Set (Mixed):
+    20k mixed (10k digits test, 10k letters test)
+
+Return Format: 
+    Returns a shuffled list of datums (or a list of lists of datums if we want to subdivide each set)
+    Datum: (img, label) pair or (img, label, meta_label) tuple
+        label = 0-9 for digits; 10-36 (or 37?) for letters
+        meta_label = 0 if digit, 1 if letter
+
+When testing only pass the img portion to the NN; tester sees the label / metalabel
+
+'''
+
 
 class Data:
     def __init__(self): 
