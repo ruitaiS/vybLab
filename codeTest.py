@@ -102,8 +102,10 @@ def dataSizes():
     print(len(data.letters_test_labels_one_hot))      
     
 def testMeta():
+    data = Data()
     meta = MetaNet()
     
+
 
 #testOneHot()
 #testGenerateChild()
