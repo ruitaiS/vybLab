@@ -75,3 +75,14 @@ def metaEval(self, subNN, data, labels):
         else:
             wrongs += 1
     return corrects, wrongs
+
+#--------------------------------------
+#Data.py
+#--------------------------------------
+    #TODO: Superfluous? Keep them in here in case we actually need it
+    self.digits_train_labels_one_hot = data[4]
+    self.digits_test_labels_one_hot = data[5]
+    #smaller / faster set for code testing purposes
+    self.mini_imgs = self.digits_train_imgs[:10000]
+    self.mini_labels = self.digits_train_labels[:10000]
+    self.mini_one_hot = self.digits_train_labels_one_hot[:10000]

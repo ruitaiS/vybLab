@@ -32,41 +32,36 @@ When testing only pass the img portion to the NN; tester sees the label / metala
 
 
 class Data:
-    def __init__(self): 
-        #Initializing Datasets:
-        #------------------------------------------------------
-        #TODO: Organize so that each dataset is a list of 3 (img input, label, and one-hot representation)
-        #That way you don't have a million confusing lines like this.
-        #But first will need to figure out how the metaNN takes in inputs
-        #------------------------------------------------------
-        self.image_size = 28 # width and length
-        self.image_pixels = self.image_size * self.image_size
+    def __init__(self):
 
+        #TODO: I think this could be optimized for better space efficiency (rn we're keeping the whole dataset in memory)
         with open("data/mnist/pickled_mnist.pkl", "br") as fh:
             data = pickle.load(fh)
 
-        self.digits_train_imgs = data[0]
-        self.digits_test_imgs = data[1]
-        self.digits_train_labels = data[2]
-        self.digits_test_labels = data[3]
-        self.digits_train_labels_one_hot = data[4]
-        self.digits_test_labels_one_hot = data[5]
+        digits_train_imgs = data[0]
+        digits_train_labels = data[2]
+        digits_test_imgs = data[1]
+        digits_test_labels = data[3]
 
-        #smaller / faster set for code testing purposes
-        self.mini_imgs = self.digits_train_imgs[:10000]
-        self.mini_labels = self.digits_train_labels[:10000]
-        self.mini_one_hot = self.digits_train_labels_one_hot[:10000]
     
-
         with open("data/emnist/pickled_emnist.pkl", "br") as fh:
             data = pickle.load(fh)
 
-        self.letters_train_imgs = data[0]
-        self.letters_test_imgs = data[1]
-        self.letters_train_labels = data[2]
-        self.letters_test_labels = data[3]
-        self.letters_train_labels_one_hot = data[4]
-        self.letters_test_labels_one_hot = data[5]
+        letters_train_imgs = data[0]
+        letters_train_labels = data[2]
+
+        letters_test_imgs = data[1]
+        letters_test_labels = data[3]
+
+
+        #TODO: Check the sizes of these after init to make sure the subarrays aren't being garbage collected
+        self.subNet_train = list(zip(digits_train_imgs[:40000], np.array(digits_train_labels[:40000])))
+        self.alterNet_train = list(zip(letters_train_imgs[:40000], np.array(letters_train_labels[:40000])))
+        
+
+
+        
+        
 
     def generateMixedSet(self):
         #TODO Ensure this way of splitting is methodologically sound
@@ -112,7 +107,17 @@ class Data:
         self.digits_test_labels = self.digits_test_labels[:5000]
         self.letters_test_labels = self.letters_test_labels[:5000]
 
-    #TODO: Actually do this lol
+    #TODO: Works for existing structure, but I think it asssumes dataset is ndarray
     def shuffle(self, dataset):
-        print(dataset)
-    #shuffles the specified dataset
+        shuffler = np.random.permutation(len(dataset))
+        return dataset[shuffler]
+
+    #TODO: Splits the specified dataset into the specified number of pieces
+    def split(self, dataset, no_of_pieces):
+
+
+
+    def subNet_Trainset():
+    def alterNet_Trainset():
+    def superNet_Trainset():
+    def metaNet_Testset():
