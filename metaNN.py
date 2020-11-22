@@ -38,7 +38,7 @@ class MetaNet:
 
     #Train super with the bit of input data. 
     #Returns prediction as (img_label, meta_label) tuple
-    def trainSuperNet(self, img, img_label, meta_label): 
+    def train(self, img, img_label, meta_label): 
 
         #Alternatively: Train subnet only if it's a digit
         subNet_outVector = self.subNet.run(img)

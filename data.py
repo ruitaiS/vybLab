@@ -23,14 +23,14 @@ MetaNet Test Set (Mixed):
 Return Format: 
     Returns a shuffled list of datums (or a list of lists of datums if we want to subdivide each set)
     Datum: (img, label) pair or (img, label, meta_label) tuple
-        label = 0-9 for digits; 10-36 (or 37?) for letters
+        label = 0-9 for digits; 10-35 for letters
         meta_label = 0 if digit, 1 if letter
 
 When testing only pass the img portion to the NN; tester sees the label / metalabel
 
 '''
 
-
+#TODO: Do we really need to keep the existing training / test distinction?
 class Data:
     def __init__(self):
 
@@ -53,71 +53,53 @@ class Data:
         letters_test_imgs = data[1]
         letters_test_labels = data[3]
 
+        #Increment letter labels by 10
+        #TODO: This will not work with NN oneHotting
+        # (will put labels out of range of NN output array size)
+        #Need to convert back or find some other workaround for that
+        letters_train_labels = [i + 10 for i in letters_train_labels]
+        letters_test_labels = [i + 10 for i in letters_test_labels]
+
 
         #TODO: Check the sizes of these after init to make sure the subarrays aren't being garbage collected
         self.subNet_train = list(zip(digits_train_imgs[:40000], np.array(digits_train_labels[:40000])))
         self.alterNet_train = list(zip(letters_train_imgs[:40000], np.array(letters_train_labels[:40000])))
-        
 
+        self.metaNet_train = list(zip(
+            np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:])) , 
+            np.concatenate((digits_train_labels[40000:], letters_train_labels[40000:])) , 
+            np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
+            ))
 
-        
-        
-
-    def generateMixedSet(self):
-        #TODO Ensure this way of splitting is methodologically sound
-
-        #Labels are 0, 1 of whether something is a digit or letter
-        #Values are the actual letter/digit being represented
-
-        #Take last 1/3 of letters + digits training, make mixed training set
-        #40000 elements in each (letters, digits, mixed)
-        self.mixed_train_imgs = np.concatenate((self.digits_train_imgs[40000:], self.letters_train_imgs[40000:]))
-        self.mixed_train_labels = np.concatenate((np.full(20000, 0), np.full(20000, 1)))
-        self.mixed_train_values = np.concatenate((self.digits_train_labels[40000:], self.letters_train_labels[40000:]))
-
-
-
-        #Take half of letters/digits test sets to make mixed test set
-        #10k each in originals; 10k in mixed set
-        self.mixed_test_imgs = np.concatenate((self.digits_test_imgs[5000:], self.letters_test_imgs[5000:]))
-        self.mixed_test_labels = np.concatenate((np.full(5000, 0), np.full(5000, 1)))
-        self.mixed_test_values = np.concatenate((self.digits_test_labels[5000:], self.letters_test_labels[5000:]))
-
-        #Shuffle mixed images & labels so index matching is preserved
-        #TODO Confirm this actually does it properly
-        shuffler = np.random.permutation(len(self.mixed_train_imgs))
-        self.mixed_train_imgs = self.mixed_train_imgs[shuffler]
-        self.mixed_train_labels = self.mixed_train_labels[shuffler]
-        self.mixed_train_values = self.mixed_train_values[shuffler]
-
-        shuffler2 = np.random.permutation(len(self.mixed_test_imgs))
-        self.mixed_test_imgs = self.mixed_test_imgs[shuffler2]
-        self.mixed_test_labels = self.mixed_test_labels[shuffler2]
-        self.mixed_test_values = self.mixed_test_values[shuffler2]
-
-        #Remove last 20k from both img and label for letters/digits
-        self.digits_train_imgs = self.digits_train_imgs[:40000]
-        self.letters_train_imgs = self.letters_train_imgs[:40000]
-        self.digits_train_labels = self.digits_train_labels[:40000]
-        self.letters_train_labels = self.letters_train_labels[:40000]
-
-        #Remove last 5k from test img/label sets for letters/digits
-        self.digits_test_imgs = self.digits_test_imgs[:5000]
-        self.letters_test_imgs = self.letters_test_imgs[:5000]
-        self.digits_test_labels = self.digits_test_labels[:5000]
-        self.letters_test_labels = self.letters_test_labels[:5000]
+        self.metaNet_test = list(zip(
+                np.concatenate((digits_test_imgs, letters_test_imgs)) , 
+                np.concatenate((digits_test_labels, letters_test_labels)) ,
+                np.concatenate((np.full(10000, 0),np.full(10000,1)))
+                ))
 
     #TODO: Works for existing structure, but I think it asssumes dataset is ndarray
     def shuffle(self, dataset):
         shuffler = np.random.permutation(len(dataset))
         return dataset[shuffler]
 
-    #TODO: Splits the specified dataset into the specified number of pieces
+    #TODO: Splits the dataset into the specified number of pieces
     def split(self, dataset, no_of_pieces):
+        remainder = len(dataset) % no_of_pieces
+        chunkSize = (len(dataset) - remainder) / no_of_pieces
+
+        #TODO: This probably isn't iterating properly
+        for i in range (0, len(dataset), chunkSize):
+            print("Do stuff here")
+        return dataset
 
 
 
-    def subNet_Trainset():
-    def alterNet_Trainset():
-    def superNet_Trainset():
-    def metaNet_Testset():
+    #TODO: rename to something less obtuse
+    def subNet_Trainset(self, no_of_pieces):
+        return self.split(self.shuffle(self.subNet_train),no_of_pieces)
+    def alterNet_Trainset(self, no_of_pieces):
+        return self.split(self.shuffle(self.alterNet_train),no_of_pieces)
+    def metaNet_Trainset(self, no_of_pieces):
+        return self.split(self.shuffle(self.metaNet_train),no_of_pieces)
+    def metaNet_Testset(self, no_of_pieces):
+        return self.split(self.shuffle(self.metaNet_test),no_of_pieces)
