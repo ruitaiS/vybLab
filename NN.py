@@ -7,7 +7,7 @@ from scipy.stats import truncnorm
 
 
 def oneHot(label, no_of_out_nodes):
-    #Converts an integer label to one-hot format
+    #Converts an integer label to one-hot target vector format
     #Assumes that # of out nodes on NN = # of possible label values
     res = np.full(no_of_out_nodes,0.01)
     res[int(label)] = 0.99

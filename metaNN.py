@@ -76,7 +76,7 @@ class MetaNet:
             #Child sees the training image, but the parent network decides what the label should be
             #child network never actually sees the 'real' label (and neither does the parent)
             label = np.argmax(self.run(training_set[i]))
-            child.train(training_set[i], oneHot(label, 10))
+            child.train(training_set[i], label)
 
             #Store how much the parents gets wrong
             if (label != training_label[i]):
