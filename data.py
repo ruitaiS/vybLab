@@ -30,6 +30,39 @@ When testing only pass the img portion to the NN; tester sees the label / metala
 
 '''
 
+#TODO: Works for existing structure, but I think it asssumes dataset is ndarray
+def shuffle(dataset):
+    shuffler = np.random.permutation(len(dataset))
+    return dataset[shuffler]
+
+#TODO: Splits the dataset into the specified number of pieces
+def split(dataset, no_of_pieces):
+    #dataset = shuffle(dataset)
+    if no_of_pieces == 0 or no_of_pieces == 1:
+        return dataset
+
+    remainder = len(dataset) % no_of_pieces
+    chunkSize = int((len(dataset) - remainder) / no_of_pieces)
+
+    result = []
+
+    for i in range (0, len(dataset), chunkSize):
+        chunk = []
+        if (i + 2*chunkSize > len(dataset)):
+            #print("Start: " + str(i) + "; End: " + str(len(dataset)-1))
+            chunk = dataset[i:len(dataset)]
+            #print("Size: " + str(len(chunk)))
+            break
+        else:
+            #print("Start: " + str(i) + "; End: " + str(i+chunkSize-1))
+            chunk = dataset[i: i+chunkSize]
+            #print("Size: " + str(len(chunk)))
+        result.append(chunk)
+        print("Total Pieces: " + str(len(result)))
+
+    print("Total Pieces Before Return: " + str(len(result)))
+    return result
+
 #TODO: Do we really need to keep the existing training / test distinction?
 class Data:
     def __init__(self):
@@ -49,7 +82,6 @@ class Data:
 
         letters_train_imgs = data[0]
         letters_train_labels = data[2]
-
         letters_test_imgs = data[1]
         letters_test_labels = data[3]
 
@@ -59,7 +91,6 @@ class Data:
         #Need to convert back or find some other workaround for that
         letters_train_labels = [i + 10 for i in letters_train_labels]
         letters_test_labels = [i + 10 for i in letters_test_labels]
-
 
         #TODO: Check the sizes of these after init to make sure the subarrays aren't being garbage collected
         self.subNet_train = list(zip(digits_train_imgs[:40000], np.array(digits_train_labels[:40000])))
@@ -77,29 +108,12 @@ class Data:
                 np.concatenate((np.full(10000, 0),np.full(10000,1)))
                 ))
 
-    #TODO: Works for existing structure, but I think it asssumes dataset is ndarray
-    def shuffle(self, dataset):
-        shuffler = np.random.permutation(len(dataset))
-        return dataset[shuffler]
-
-    #TODO: Splits the dataset into the specified number of pieces
-    def split(self, dataset, no_of_pieces):
-        remainder = len(dataset) % no_of_pieces
-        chunkSize = (len(dataset) - remainder) / no_of_pieces
-
-        #TODO: This probably isn't iterating properly
-        for i in range (0, len(dataset), chunkSize):
-            print("Do stuff here")
-        return dataset
-
-
-
     #TODO: rename to something less obtuse
     def subNet_Trainset(self, no_of_pieces):
-        return self.split(self.shuffle(self.subNet_train),no_of_pieces)
+        return split(shuffle(self.subNet_train),no_of_pieces)
     def alterNet_Trainset(self, no_of_pieces):
-        return self.split(self.shuffle(self.alterNet_train),no_of_pieces)
+        return split(shuffle(self.alterNet_train),no_of_pieces)
     def metaNet_Trainset(self, no_of_pieces):
-        return self.split(self.shuffle(self.metaNet_train),no_of_pieces)
+        return split(shuffle(self.metaNet_train),no_of_pieces)
     def metaNet_Testset(self, no_of_pieces):
-        return self.split(self.shuffle(self.metaNet_test),no_of_pieces)
+        return split(shuffle(self.metaNet_test),no_of_pieces)

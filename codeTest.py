@@ -1,10 +1,11 @@
 import numpy as np
 from NN import NeuralNet
 from metaNN import MetaNet
-from data import Data
+from data import Data, split
 
 #convert (integer) label into one-hot format
 #Used in metaNN
+'''
 def oneHot(label, no_categories):
     res = np.full(no_categories,0.01)
     res[int(label)] = 0.99
@@ -12,14 +13,14 @@ def oneHot(label, no_categories):
 
 def generateChild(parent, training_set, training_label, training_label_one_hot):
     data = Data()
-    child1 = NeuralNet(no_of_in_nodes = data.image_pixels,
+    child1 = NeuralNet(no_of_in_nodes = 28*28,
         #Output vector size is equal to vector size of current network
         #As we create new categories each "generation" of network will have more outnodes
         no_of_out_nodes = len(parent.run(training_set[0])), 
         no_of_hidden_nodes = 100,
         learning_rate = 0.1)
 
-    child2 = NeuralNet(no_of_in_nodes = data.image_pixels,
+    child2 = NeuralNet(no_of_in_nodes = 28*28,
         #Output vector size is equal to vector size of current network
         #As we create new categories each "generation" of network will have more outnodes
         no_of_out_nodes = len(parent.run(training_set[0])), 
@@ -49,7 +50,7 @@ def generateChild(parent, training_set, training_label, training_label_one_hot):
 
 def testGenerateChild():
     data = Data()
-    parent = NeuralNet(no_of_in_nodes = data.image_pixels, 
+    parent = NeuralNet(no_of_in_nodes = 28*28, 
         no_of_out_nodes = 10, 
         no_of_hidden_nodes = 100,
         learning_rate = 0.1)
@@ -104,9 +105,17 @@ def dataSizes():
 def testMeta():
     data = Data()
     meta = MetaNet()
-    
+'''
+
+def testSplit(no_of_pieces):
+    dataset = Data().subNet_train
+    split(dataset, no_of_pieces)
+
 
 
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
+for i in range (10):
+    print("Splitting into " + str(i) + " pieces")
+    testSplit(i)
