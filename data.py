@@ -112,31 +112,31 @@ class Data:
         self.letters_test_labels = self.letters_test_labels[shuffler]
 
     #TODO: rename to something less obtuse
-    def sub_tr(self, no_of_pieces):
+    def sub_tr(self):
         self.shuffle()
 
         subNet_train = list(zip(self.digits_train_imgs[:40000], np.array(self.digits_train_labels[:40000])))
-        return split(subNet_train,no_of_pieces)
+        return subNet_train
 
-    def alter_tr(self, no_of_pieces):
+    def alter_tr(self):
         self.shuffle()
         alterNet_train = list(zip(self.letters_train_imgs[:40000], np.array(self.letters_train_labels[:40000])))
-        return split(alterNet_train,no_of_pieces)
+        return alterNet_train
 
-    def meta_tr(self, no_of_pieces):
+    def meta_tr(self):
         self.shuffle()
         metaNet_train = list(zip(
             np.concatenate((self.digits_train_imgs[40000:], self.letters_train_imgs[40000:])) , 
             np.concatenate((self.digits_train_labels[40000:], self.letters_train_labels[40000:])) , 
             np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
             ))
-        return split(metaNet_train,no_of_pieces)
+        return metaNet_train
 
-    def meta_te(self, no_of_pieces):
+    def meta_te(self):
         self.shuffle()
         metaNet_test = list(zip(
                 np.concatenate((self.digits_test_imgs, self.letters_test_imgs)) , 
                 np.concatenate((self.digits_test_labels, self.letters_test_labels)) ,
                 np.concatenate((np.full(10000, 0),np.full(10000,1)))
                 ))
-        return split(metaNet_test,no_of_pieces)
+        return metaNet_test
