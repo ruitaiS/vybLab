@@ -92,7 +92,7 @@ class Data:
         self.letters_test_labels = np.array([i + 10 for i in self.letters_test_labels])
 
     def shuffle(self):
-        #Shuffle Digits Training
+        #Shuffle Digits Train
         shuffler = np.random.permutation(len(self.digits_train_imgs))
         self.digits_train_imgs = self.digits_train_imgs[shuffler]
         self.digits_train_labels = self.digits_train_labels[shuffler]
@@ -101,7 +101,6 @@ class Data:
         shuffler = np.random.permutation(len(self.digits_test_imgs))
         self.digits_test_imgs = self.digits_test_imgs[shuffler]
         self.digits_test_labels = self.digits_test_labels[shuffler]
-
         
         #Shuffle Letters Train
         shuffler = np.random.permutation(len(self.letters_train_imgs))
@@ -118,28 +117,35 @@ class Data:
     def sub_tr(self):
         self.shuffle()
 
-        subNet_train = list(zip(self.digits_train_imgs[:40000], np.array(self.digits_train_labels[:40000])))
+        subNet_train = np.array(list(zip(self.digits_train_imgs[:40000], np.array(self.digits_train_labels[:40000]))))
         return subNet_train
 
     def alter_tr(self):
         self.shuffle()
-        alterNet_train = list(zip(self.letters_train_imgs[:40000], np.array(self.letters_train_labels[:40000])))
+        alterNet_train = np.array(list(zip(self.letters_train_imgs[:40000], np.array(self.letters_train_labels[:40000]))))
         return alterNet_train
 
     def meta_tr(self):
         self.shuffle()
-        metaNet_train = list(zip(
+        metaNet_train = np.array(list(zip(
             np.concatenate((self.digits_train_imgs[40000:], self.letters_train_imgs[40000:])) , 
             np.concatenate((self.digits_train_labels[40000:], self.letters_train_labels[40000:])) , 
             np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
-            ))
+            )))
+
+        shuffler = np.random.permutation(len(metaNet_train))
+        metaNet_train = metaNet_train[shuffler]
+
         return metaNet_train
 
     def meta_te(self):
         self.shuffle()
-        metaNet_test = list(zip(
+        metaNet_test = np.array(list(zip(
                 np.concatenate((self.digits_test_imgs, self.letters_test_imgs)) , 
                 np.concatenate((self.digits_test_labels, self.letters_test_labels)) ,
                 np.concatenate((np.full(10000, 0),np.full(10000,1)))
-                ))
+                )))
+
+        shuffler = np.random.permutation(len(metaNet_test))
+        metaNet_test = metaNet_test[shuffler]
         return metaNet_test

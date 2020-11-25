@@ -107,7 +107,7 @@ def testMeta():
     meta = MetaNet()
 
 def testSplit():
-    dataset = Data().sub_tr()
+    dataset = Data().meta_tr()
     for i in range (10):
         print("Splitting into " + str(i) + " pieces")
         print("Returned Length: " + str(len(split(dataset, i))))
