@@ -5,7 +5,7 @@ from data import Data, split
 
 #convert (integer) label into one-hot format
 #Used in metaNN
-'''
+
 def oneHot(label, no_categories):
     res = np.full(no_categories,0.01)
     res[int(label)] = 0.99
@@ -105,17 +105,16 @@ def dataSizes():
 def testMeta():
     data = Data()
     meta = MetaNet()
-'''
 
 def testSplit():
-    dataset = Data().subNet_train
+    dataset = Data().sub_tr()
     for i in range (10):
         print("Splitting into " + str(i) + " pieces")
         print("Returned Length: " + str(len(split(dataset, i))))
-
 
 
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
 testSplit()
+
