@@ -87,8 +87,9 @@ class Data:
         #TODO: This will not work with NN oneHotting
         # (will put labels out of range of NN output array size)
         #Need to convert back or find some other workaround for that
-        self.letters_train_labels = [i + 10 for i in self.letters_train_labels]
-        self.letters_test_labels = [i + 10 for i in self.letters_test_labels]
+
+        self.letters_train_labels = np.array([i + 10 for i in self.letters_train_labels])
+        self.letters_test_labels = np.array([i + 10 for i in self.letters_test_labels])
 
     def shuffle(self):
         #Shuffle Digits Training
@@ -101,7 +102,7 @@ class Data:
         self.digits_test_imgs = self.digits_test_imgs[shuffler]
         self.digits_test_labels = self.digits_test_labels[shuffler]
 
-        '''
+        
         #Shuffle Letters Train
         shuffler = np.random.permutation(len(self.letters_train_imgs))
         self.letters_train_imgs = self.letters_train_imgs[shuffler]
@@ -111,11 +112,11 @@ class Data:
         shuffler = np.random.permutation(len(self.letters_test_imgs))
         self.letters_test_imgs = self.letters_test_imgs[shuffler]
         self.letters_test_labels = self.letters_test_labels[shuffler]
-        '''
+        
 
     #TODO: rename to something less obtuse
     def sub_tr(self):
-        #self.shuffle()
+        self.shuffle()
 
         subNet_train = list(zip(self.digits_train_imgs[:40000], np.array(self.digits_train_labels[:40000])))
         return subNet_train
