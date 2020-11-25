@@ -62,7 +62,6 @@ def split(dataset, no_of_pieces):
     return result
 
 #TODO: Do we really need to keep the existing training / test distinction?
-#TODO: not happy w/ how this assigns the data to groups before shuffling; should shuffle *all* and then group
 class Data:
     def __init__(self):
 
@@ -70,49 +69,74 @@ class Data:
         with open("data/mnist/pickled_mnist.pkl", "br") as fh:
             data = pickle.load(fh)
 
-        digits_train_imgs = data[0]
-        digits_train_labels = data[2]
-        digits_test_imgs = data[1]
-        digits_test_labels = data[3]
+        self.digits_train_imgs = data[0]
+        self.digits_train_labels = data[2]
+        self.digits_test_imgs = data[1]
+        self.digits_test_labels = data[3]
 
     
         with open("data/emnist/pickled_emnist.pkl", "br") as fh:
             data = pickle.load(fh)
 
-        letters_train_imgs = data[0]
-        letters_train_labels = data[2]
-        letters_test_imgs = data[1]
-        letters_test_labels = data[3]
+        self.letters_train_imgs = data[0]
+        self.letters_train_labels = data[2]
+        self.letters_test_imgs = data[1]
+        self.letters_test_labels = data[3]
 
         #Increment letter labels by 10
         #TODO: This will not work with NN oneHotting
         # (will put labels out of range of NN output array size)
         #Need to convert back or find some other workaround for that
-        letters_train_labels = [i + 10 for i in letters_train_labels]
-        letters_test_labels = [i + 10 for i in letters_test_labels]
+        self.letters_train_labels = [i + 10 for i in self.letters_train_labels]
+        self.letters_test_labels = [i + 10 for i in self.letters_test_labels]
 
-        #TODO: Check the sizes of these after init to make sure the subarrays aren't being garbage collected
-        self.subNet_train = list(zip(digits_train_imgs[:40000], np.array(digits_train_labels[:40000])))
-        self.alterNet_train = list(zip(letters_train_imgs[:40000], np.array(letters_train_labels[:40000])))
+    def shuffle(self):
+        #Shuffle Digits Training
+        shuffler = np.random.permutation(len(self.digits_train_imgs))
+        self.digits_train_imgs = self.digits_train_imgs[shuffler]
+        self.digits_train_labels = self.digits_train_labels[shuffler]
 
-        self.metaNet_train = list(zip(
-            np.concatenate((digits_train_imgs[40000:], letters_train_imgs[40000:])) , 
-            np.concatenate((digits_train_labels[40000:], letters_train_labels[40000:])) , 
-            np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
-            ))
+        #Shuffle Digits Test
+        shuffler = np.random.permutation(len(self.digits_test_imgs))
+        self.digits_test_imgs = self.digits_test_imgs[shuffler]
+        self.digits_test_labels = self.digits_test_labels[shuffler]
 
-        self.metaNet_test = list(zip(
-                np.concatenate((digits_test_imgs, letters_test_imgs)) , 
-                np.concatenate((digits_test_labels, letters_test_labels)) ,
-                np.concatenate((np.full(10000, 0),np.full(10000,1)))
-                ))
+        #Shuffle Letters Train
+        shuffler = np.random.permutation(len(self.letters_train_imgs))
+        self.letters_train_imgs = self.letters_train_imgs[shuffler]
+        self.letters_train_labels = self.letters_train_labels[shuffler]
+
+        #Shuffle Letters Test
+        shuffler = np.random.permutation(len(self.letters_test_imgs))
+        self.letters_test_imgs = self.letters_test_imgs[shuffler]
+        self.letters_test_labels = self.letters_test_labels[shuffler]
 
     #TODO: rename to something less obtuse
-    def subNet_Trainset(self, no_of_pieces):
-        return split(np.random.shuffle(self.subNet_train),no_of_pieces)
-    def alterNet_Trainset(self, no_of_pieces):
-        return split(np.random.shuffle(self.alterNet_train),no_of_pieces)
-    def metaNet_Trainset(self, no_of_pieces):
-        return split(np.random.shuffle(self.metaNet_train),no_of_pieces)
-    def metaNet_Testset(self, no_of_pieces):
-        return split(np.random.shuffle(self.metaNet_test),no_of_pieces)
+    def sub_tr(self, no_of_pieces):
+        self.shuffle()
+
+        subNet_train = list(zip(self.digits_train_imgs[:40000], np.array(self.digits_train_labels[:40000])))
+        return split(subNet_train,no_of_pieces)
+
+    def alter_tr(self, no_of_pieces):
+        self.shuffle()
+        alterNet_train = list(zip(self.letters_train_imgs[:40000], np.array(self.letters_train_labels[:40000])))
+        return split(alterNet_train,no_of_pieces)
+
+    def meta_tr(self, no_of_pieces):
+        self.shuffle()
+        metaNet_train = list(zip(
+            np.concatenate((self.digits_train_imgs[40000:], self.letters_train_imgs[40000:])) , 
+            np.concatenate((self.digits_train_labels[40000:], self.letters_train_labels[40000:])) , 
+            np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
+            ))
+        return split(metaNet_train,no_of_pieces)
+
+    def meta_te(self, no_of_pieces):
+        self.shuffle()
+        metaNet_test = list(zip(
+                np.concatenate((self.digits_test_imgs, self.letters_test_imgs)) , 
+                np.concatenate((self.digits_test_labels, self.letters_test_labels)) ,
+                np.concatenate((np.full(10000, 0),np.full(10000,1)))
+                ))
+        return split(metaNet_test,no_of_pieces)
