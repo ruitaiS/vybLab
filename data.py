@@ -30,16 +30,14 @@ When testing only pass the img portion to the NN; tester sees the label / metala
 
 '''
 
-#TODO: Works for existing structure, but I think it asssumes dataset is ndarray
-def shuffle(dataset):
-    shuffler = np.random.permutation(len(dataset))
-    return dataset[shuffler]
 
-#TODO: Splits the dataset into the specified number of pieces
 def split(dataset, no_of_pieces):
     #dataset = shuffle(dataset)
-    if no_of_pieces == 0 or no_of_pieces == 1:
+
+    if no_of_pieces == 0:
         return dataset
+    elif no_of_pieces == 1:
+        return [dataset]
 
     remainder = len(dataset) % no_of_pieces
     chunkSize = int((len(dataset) - remainder) / no_of_pieces)
@@ -50,20 +48,21 @@ def split(dataset, no_of_pieces):
         chunk = []
         if (i + 2*chunkSize > len(dataset)):
             #print("Start: " + str(i) + "; End: " + str(len(dataset)-1))
-            chunk = dataset[i:len(dataset)]
             #print("Size: " + str(len(chunk)))
+            chunk = dataset[i:len(dataset)]
+            result.append(chunk)
             break
         else:
             #print("Start: " + str(i) + "; End: " + str(i+chunkSize-1))
-            chunk = dataset[i: i+chunkSize]
             #print("Size: " + str(len(chunk)))
-        result.append(chunk)
-        print("Total Pieces: " + str(len(result)))
+            chunk = dataset[i: i+chunkSize]
+            result.append(chunk)
 
-    print("Total Pieces Before Return: " + str(len(result)))
+    print("Total Pieces: " + str(len(result)))
     return result
 
 #TODO: Do we really need to keep the existing training / test distinction?
+#TODO: not happy w/ how this assigns the data to groups before shuffling; should shuffle *all* and then group
 class Data:
     def __init__(self):
 
@@ -110,10 +109,10 @@ class Data:
 
     #TODO: rename to something less obtuse
     def subNet_Trainset(self, no_of_pieces):
-        return split(shuffle(self.subNet_train),no_of_pieces)
+        return split(np.random.shuffle(self.subNet_train),no_of_pieces)
     def alterNet_Trainset(self, no_of_pieces):
-        return split(shuffle(self.alterNet_train),no_of_pieces)
+        return split(np.random.shuffle(self.alterNet_train),no_of_pieces)
     def metaNet_Trainset(self, no_of_pieces):
-        return split(shuffle(self.metaNet_train),no_of_pieces)
+        return split(np.random.shuffle(self.metaNet_train),no_of_pieces)
     def metaNet_Testset(self, no_of_pieces):
-        return split(shuffle(self.metaNet_test),no_of_pieces)
+        return split(np.random.shuffle(self.metaNet_test),no_of_pieces)

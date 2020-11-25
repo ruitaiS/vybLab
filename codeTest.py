@@ -107,15 +107,15 @@ def testMeta():
     meta = MetaNet()
 '''
 
-def testSplit(no_of_pieces):
+def testSplit():
     dataset = Data().subNet_train
-    split(dataset, no_of_pieces)
+    for i in range (10):
+        print("Splitting into " + str(i) + " pieces")
+        print("Returned Length: " + str(len(split(dataset, i))))
 
 
 
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
-for i in range (10):
-    print("Splitting into " + str(i) + " pieces")
-    testSplit(i)
+testSplit()
