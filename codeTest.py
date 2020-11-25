@@ -2,6 +2,7 @@ import numpy as np
 from NN import NeuralNet
 from metaNN import MetaNet
 from data import Data, split
+import matplotlib.pyplot as plt
 
 #convert (integer) label into one-hot format
 #Used in metaNN
@@ -101,10 +102,6 @@ def dataSizes():
     print(len(data.letters_test_labels))
     print(len(data.letters_train_labels_one_hot))
     print(len(data.letters_test_labels_one_hot))      
-    
-def testMeta():
-    data = Data()
-    meta = MetaNet()
 
 def testSplit():
     dataset = Data().meta_tr()
@@ -112,9 +109,73 @@ def testSplit():
         print("Splitting into " + str(i) + " pieces")
         print("Returned Length: " + str(len(split(dataset, i))))
 
+def testMeta():
+    
+    data = Data()
+    meta = MetaNet()
+
+    #accuracy[i] = 1 if ith datapoint was correctly classified; else 0
+    #Weird format but needed for grapher to show historical accuracy
+    accuracy = []
+    meta_accuracy = []
+
+    print("Phase 1: Train Subnet on Numbers")
+
+    for datum in data.sub_tr():
+        (img, label) = datum
+        print(str(label))
+
+
+    '''
+    for data in nums:
+        #data of the form (data, label, meta_label)
+        (img, lab, meta_lab) = data
+        (result, meta_result) = model.train(img, lab, meta_lab)
+
+        #Update the meta accuracy
+        if np.argmax(meta_result) == meta_lab: 
+            meta_accuracy.append(1)
+        else: 
+            meta_accuracy.append(0)
+
+        #Update the subnet accuracy. 
+        if np.argmax(result) == lab: 
+            accuracy.append(1)
+        else: 
+            accuracy.append(0)
+    
+    #TODO: Half of this data (the numbers) are reused from phase 1
+    print("Phase 2: Testing. (On both characters and numbers.)")
+    for data in combined_data:
+        (img, lab, meta_lab) = data
+        (result, meta_result) = model.run(img, lab, meta_lab)
+
+        #TODO: The results from both phases go into the same array?
+        #Update the meta accuracy
+        if np.argmax(meta_result) == meta_lab: 
+            meta_accuracy.append(1)
+        else: 
+            meta_accuracy.append(0)
+        #Update the subnet accuracy. 
+        if np.argmax(result) == lab: 
+            accuracy.append(1)
+        else: 
+            accuracy.append(0)
+
+    #Graph the results. 
+    print("Reporting Results")
+    meta_accuracy = [sum(meta_accuracy[i:i+window_size])/window_size for i in range(len(meta_accuracy)-window_size)]
+    accuracy = [sum(accuracy[i:i+window_size])/window_size for i in range(len(accuracy)-window_size)]
+
+    plt.plot(accuracy, label="Model Accuracy")
+    plt.plot(meta_accuracy, label="Meta Accuracy")
+    plt.legend(loc='lower right')
+    plt.title(plot_title)
+    plt.show()
+    '''
 
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
 #testSplit()
-
+testMeta()
