@@ -116,5 +116,5 @@ def testSplit():
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
-testSplit()
+#testSplit()
 

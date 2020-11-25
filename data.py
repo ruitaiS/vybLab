@@ -113,7 +113,7 @@ class Data:
         self.letters_test_labels = self.letters_test_labels[shuffler]
         
 
-    #TODO: rename to something less obtuse
+    #TODO: Do we really need to convert to a list then an np array?
     def sub_tr(self):
         self.shuffle()
 
