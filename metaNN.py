@@ -45,7 +45,7 @@ class MetaNet:
 
         #Alternatively: Train subnet only if it's a digit
         subNet_outVector = self.subNet.run(img)
-        metaNet_outVector = self.superNet.train(subNet_outVector, meta_label)
+        metaNet_outVector = self.superNet.train(subNet_outVector.T, meta_label)
 
         #Return prediction result tuple
         #Use subnet prediction if super returns 1

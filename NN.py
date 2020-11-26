@@ -7,13 +7,12 @@ from scipy.stats import truncnorm
 
 
 def oneHot(label, labelKey):
-    #Uses labelKey to map label value to a oneHot vector
-    res = np.full(len(labelKey),0.01)
+    oH = np.full(len(labelKey),0.01)
     for i in range(len(labelKey)):
         if label == labelKey[i]:
-            res[i] = 0.99
+            oH[i] = 0.99
             break
-    return res
+    return oH
 
 def sigmoid(x):
     #Determines activation output level of each node
@@ -41,7 +40,7 @@ class NeuralNet:
         self.learning_rate = learning_rate 
         self.create_weight_matrices()
 
-        #Default mapping for label ints to one-hot indices
+        #Default mapping for labels to one-hot indices
         #See oneHot() for use
         self.labelKey = np.array([i for i in range(no_of_out_nodes)])
         
