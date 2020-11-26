@@ -51,18 +51,19 @@ class MetaNet:
         #Use subnet prediction if super returns 1
         #else use alternet prediction
         if np.argmax(metaNet_outVector) == 1: 
-            return (np.argmax(subNet_outVector), 1)
+            return (self.subNet.labelKey[np.argmax(subNet_outVector)], 1)
         else:
-            return (np.argmax(self.alterNet.run(img)), 0)
+            return (self.alterNet.labelKey[np.argmax(self.alterNet.run(img))], 0)
 
     #Return result without altering weights
+    #TODO: Should this be a tuple as well to keep it in line with train?
     def run(self, img):
-        subNet_outVector = self.subNet.run(img).flatten()
-        metaNet_outVector = self.superNet.run(subNet_outVector)
+        subNet_outVector = self.subNet.run(img)
+        metaNet_outVector = self.superNet.run(subNet_outVector.T)
         if np.argmax(metaNet_outVector) == 1: 
-            return np.argmax(subNet_outVector)
+            return self.subNet.labelKey[np.argmax(subNet_outVector)]
         else:
-            return np.argmax(self.alterNet.run(img))    
+            return self.alterNet.labelKey[np.argmax(self.alterNet.run(img))]
     
     #TODO: Generalize this so it generates a MetaNet with a sub, meta, and alter net
     def generateChild(self, training_set, training_label):
