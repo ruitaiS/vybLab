@@ -85,3 +85,9 @@ class MetaNet:
 
         print("Percentage Mislabelled: " + str(wrong/total))
         return child
+
+    def getSubNet(self):
+        return self.subNet
+
+    def getAlterNet(self):
+        return self.alterNet

@@ -2,7 +2,7 @@ import numpy as np
 from NN import NeuralNet
 from metaNN import MetaNet
 from data import Data, split
-import matplotlib.pyplot as plt
+from grapher import graph
 
 #convert (integer) label into one-hot format
 #Used in metaNN
@@ -114,17 +114,37 @@ def testMeta():
     data = Data()
     meta = MetaNet()
 
+
+    subNetList = []
+
     #accuracy[i] = 1 if ith datapoint was correctly classified; else 0
     #Weird format but needed for grapher to show historical accuracy
     accuracy = []
     meta_accuracy = []
 
-    print("Phase 1: Train Subnet on Numbers")
 
+    #TODO: Graph results
+
+    print("Phase 1: Train Subnet on Numbers")
     for datum in data.sub_tr():
         (img, label) = datum
-        print(str(label))
+        meta.trainSubNet(img, label)
+    
+    print("Phase 2: Train AlterNet")
+    for datum in data.alter_tr():
+        (img, label) = datum
+        meta.trainAlterNet(img, label)
 
+    print("Phase 3: Train MetaNet")
+    for datum in data.meta_tr():
+        (img, label, meta_label) = datum
+        meta.train(img, label, meta_label)
+
+    print("Phase 4: Test MetaNet")
+    for datum in data.meta_te():
+        (img, label, meta_label) = datum
+        meta.run(img)
+        #Compare meta output with labels / meta_labels
 
     '''
     for data in nums:
