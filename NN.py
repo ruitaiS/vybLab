@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 from scipy.stats import truncnorm
 
 
-def oneHot(label, no_of_out_nodes):
-    #Converts an integer label to one-hot target vector format
-    #Assumes that # of out nodes on NN = # of possible label values
-    res = np.full(no_of_out_nodes,0.01)
-    res[int(label)] = 0.99
+def oneHot(label, labelKey):
+    #Uses labelKey to map label value onto a oneHot vector
+    res = np.full(len(labelKey),0.01)
+    for i in range(len(labelKey)):
+        if label == labelKey[i]:
+            res[i] = 0.99
+            break
     return res
 
 def sigmoid(x):
@@ -38,6 +40,10 @@ class NeuralNet:
         self.no_of_hidden_nodes = no_of_hidden_nodes
         self.learning_rate = learning_rate 
         self.create_weight_matrices()
+
+        #Default mapping for label ints to one-hot indices
+        #See oneHot method for use
+        self.labelKey = np.array([i for i in range(no_of_out_nodes)])
         
     def create_weight_matrices(self):
         rad = 1 / np.sqrt(self.no_of_in_nodes)

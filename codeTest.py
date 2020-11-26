@@ -194,8 +194,16 @@ def testMeta():
     plt.show()
     '''
 
+
+def testLabelList():
+    no_of_out_nodes = 10
+    labelList = np.array([i for i in range(no_of_out_nodes)])
+    print(labelList)
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
 #testSplit()
-testMeta()
+
+#testMeta()
+
+testLabelList()
