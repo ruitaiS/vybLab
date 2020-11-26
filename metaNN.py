@@ -21,6 +21,9 @@ class MetaNet:
                         no_of_hidden_nodes = 60,
                         learning_rate = 0.1)
 
+        #Offset the alterNet labelKeys by the number of subNet labels so we don't overlap
+        self.alterNet.set_label_key(np.array([i+number_of_subnet_labels for i in range(number_of_alternet_labels)]))
+
     #superNet is the core of the MetaNet instance, but sub and alter can be swapped out
     def setSubNet(self, subNet):
         self.subNet = subNet

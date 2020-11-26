@@ -109,6 +109,11 @@ def testSplit():
         print("Splitting into " + str(i) + " pieces")
         print("Returned Length: " + str(len(split(dataset, i))))
 
+def testLabelList():
+    no_of_out_nodes = 10
+    labelList = np.array([i for i in range(no_of_out_nodes)])
+    print(labelList)
+
 def testMeta():
     
     data = Data()
@@ -194,16 +199,10 @@ def testMeta():
     plt.show()
     '''
 
-
-def testLabelList():
-    no_of_out_nodes = 10
-    labelList = np.array([i for i in range(no_of_out_nodes)])
-    print(labelList)
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
 #testSplit()
+#testLabelList()
 
-#testMeta()
-
-testLabelList()
+testMeta()

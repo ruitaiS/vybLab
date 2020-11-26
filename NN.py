@@ -7,7 +7,7 @@ from scipy.stats import truncnorm
 
 
 def oneHot(label, labelKey):
-    #Uses labelKey to map label value onto a oneHot vector
+    #Uses labelKey to map label value to a oneHot vector
     res = np.full(len(labelKey),0.01)
     for i in range(len(labelKey)):
         if label == labelKey[i]:
@@ -42,7 +42,7 @@ class NeuralNet:
         self.create_weight_matrices()
 
         #Default mapping for label ints to one-hot indices
-        #See oneHot method for use
+        #See oneHot() for use
         self.labelKey = np.array([i for i in range(no_of_out_nodes)])
         
     def create_weight_matrices(self):
@@ -59,7 +59,10 @@ class NeuralNet:
         self.who = X.rvs((self.no_of_out_nodes, self.no_of_hidden_nodes))
 
     def set_learning_rate(self, learning_rate):
-        self.learning_rate = learning_rate         
+        self.learning_rate = learning_rate
+
+    def set_label_key(self, lK):
+        self.labelKey = lK         
     
     def train(self, input_vector, label):
         """
@@ -67,7 +70,7 @@ class NeuralNet:
         be tuple, list or ndarray
         """
 
-        target_vector = oneHot(label, self.no_of_out_nodes)
+        target_vector = oneHot(label, self.labelKey)
         
         input_vector = np.array(input_vector, ndmin=2).T
         target_vector = np.array(target_vector, ndmin=2).T
@@ -131,4 +134,6 @@ set_learning_rate allows you to modify the learning rate after the NN is already
 
 train and run operate on a single input (plus label, in the case of train)
 run is the only one that gives an output vector
+
+labelKey[np.argmax(output_vector)] converts the output vector back into a label
 '''
