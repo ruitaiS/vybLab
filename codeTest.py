@@ -117,7 +117,7 @@ def testLabelList():
 def testMeta():
     
     data = Data()
-    meta = MetaNet()
+    meta = MetaNet(no_of_subnet_labels=10)
     grapher = Grapher()
 
     #TODO: Actually use this for something
@@ -164,6 +164,10 @@ def testMeta():
             accuracy.append(0)
     grapher.addGraph(accuracy, "MetaNet Test Accuracy")
         #Compare meta output with labels / meta_labels
+
+    print("Phase 5: Generate Child Network")
+    accuracy = []
+    #TODO: This
 
     grapher.graphAll()
 

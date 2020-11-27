@@ -5,24 +5,28 @@ from NN import NeuralNet
 class MetaNet:
 
     #TODO: Think about how to generalize this so that it can be built up
-    def __init__(self, number_of_subnet_labels=10, number_of_alternet_labels = 26):
+    def __init__(self, no_of_subnet_labels):
         self.subNet = NeuralNet(no_of_in_nodes = 28*28, 
                         no_of_out_nodes = number_of_subnet_labels, 
                         no_of_hidden_nodes = 60,
                         learning_rate = 0.1)
-        self.superNet = NeuralNet(no_of_in_nodes = number_of_subnet_labels, 
+        self.superNet = NeuralNet(no_of_in_nodes = no_of_subnet_labels, 
                         no_of_out_nodes = 2, 
                         no_of_hidden_nodes = 15,
                         learning_rate = 0.1)
 
-        #Placeholder alternate classifier for letters
+
+        #TODO: This is a placeholder; it's supposed to grow as the alternet learns
+        self.number_of_alternet_labels = 26
+
+        #Placeholder alternate classifier
         self.alterNet = NeuralNet(no_of_in_nodes = 28*28, 
-                        no_of_out_nodes = number_of_alternet_labels, 
+                        no_of_out_nodes = 26, 
                         no_of_hidden_nodes = 60,
                         learning_rate = 0.1)
 
         #Offset the alterNet labelKeys by the number of subNet labels so we don't overlap
-        self.alterNet.set_label_key(np.array([i+number_of_subnet_labels for i in range(number_of_alternet_labels)]))
+        self.alterNet.set_label_key(np.array([i+no_of_subnet_labels for i in range(self.number_of_alternet_labels)]))
 
     #superNet is the core of the MetaNet instance, but sub and alter can be swapped out
     def setSubNet(self, subNet):
@@ -71,11 +75,13 @@ class MetaNet:
     #TODO: Generalize this so it generates a MetaNet with a sub, meta, and alter net
     def generateChild(self, training_set, training_label):
         child = NeuralNet(no_of_in_nodes = 28*28,
-            #Output vector size is equal to vector size of current network
-            #As we create new categories each "generation" of network will have more outnodes
             no_of_out_nodes = len(self.run(training_set[0])), 
             no_of_hidden_nodes = 100,
             learning_rate = 0.1)
+
+        #Output vector size is equal to vector size of current network
+        #As we create new categories each "generation" of network will have more outnodes
+        child = MetaNet(no_of_subnet_labels = len(self.run(training_set[0])))
 
         wrong = 0
         total = 0
