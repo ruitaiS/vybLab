@@ -1,16 +1,27 @@
 import matplotlib.pyplot as plt
 
-def graph(accuracy, meta_accuracy):
-    print("Reporting Results")
+
+class Graphs:
+    def __init__(self):
+        self.plot_title="Accuracy Over Time"
+        self.window_size=1000
+        self.graphList = []
+
+    def addGraph(self, accuracy, name):
+        self.graphList.append((accuracy, name))
+
+    def graph(self, graph):
+        accuracy, name = graph
+        accuracy = [sum(accuracy[i:i+self.window_size])/self.window_size for i in range(len(accuracy)-self.window_size)]
+        plt.plot(accuracy, name)
+
+    def graphAll(self):
+
+        for graph in self.graphList:
+            graph(graph)
+
+        plt.legend(loc='lower right')
+        plt.title(self.plot_title)
+        plt.show()
+
     
-    plot_title="Accuracy Over Time"
-    window_size=1000
-
-    meta_accuracy = [sum(meta_accuracy[i:i+window_size])/window_size for i in range(len(meta_accuracy)-window_size)]
-    accuracy = [sum(accuracy[i:i+window_size])/window_size for i in range(len(accuracy)-window_size)]
-
-    plt.plot(accuracy, label="Model Accuracy")
-    plt.plot(meta_accuracy, label="Meta Accuracy")
-    plt.legend(loc='lower right')
-    plt.title(plot_title)
-    plt.show()

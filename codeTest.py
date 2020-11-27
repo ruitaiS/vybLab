@@ -131,9 +131,16 @@ def testMeta():
     #TODO: Graph results
 
     print("Phase 1: Train Subnet on Numbers")
-    for datum in data.sub_tr():
+    for index, datum in enumerate(data.sub_tr()):
         (img, label) = datum
-        meta.trainSubNet(img, label)
+        if (meta.trainSubNet(img, label) == label):
+            accuracy[index] = 1
+        else:
+            accuracy[index] = 0
+
+    #Graph Subnet Training Accuracy
+    
+
     
     print("Phase 2: Train AlterNet")
     for datum in data.alter_tr():

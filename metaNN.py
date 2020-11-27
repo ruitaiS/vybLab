@@ -33,11 +33,11 @@ class MetaNet:
 
     #Single Instance Training; returns predictions before altering weights
     def trainSubNet(self, img, label):
-        return np.argmax(self.subNet.train(img, label))
+        return self.subNet.labelKey[np.argmax(self.subNet.train(img, label))]
 
     #TODO: May become defunct if alternet is designed to cluster (eg. learn unsupervised)
     def trainAlterNet(self, img, label):
-        return np.argmax(self.alterNet.train(img, label))
+        return self.alterNet.labelKey[np.argmax(self.alterNet.train(img, label))]
 
     #Train super with the bit of input data. 
     #Returns prediction as (img_label, meta_label) tuple
