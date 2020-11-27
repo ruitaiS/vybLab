@@ -2,7 +2,7 @@ import numpy as np
 from NN import NeuralNet
 from metaNN import MetaNet
 from data import Data, split
-from grapher import graph
+from grapher import Grapher
 
 #convert (integer) label into one-hot format
 #Used in metaNN
@@ -118,93 +118,54 @@ def testMeta():
     
     data = Data()
     meta = MetaNet()
+    grapher = Grapher()
 
-
+    #TODO: Actually use this for something
     subNetList = []
 
-    #accuracy[i] = 1 if ith datapoint was correctly classified; else 0
-    #Weird format but needed for grapher to show historical accuracy
-    accuracy = []
-    meta_accuracy = []
-
-
-    #TODO: Graph results
-
     print("Phase 1: Train Subnet on Numbers")
-    for index, datum in enumerate(data.sub_tr()):
+    accuracy = []
+    for datum in data.sub_tr():
         (img, label) = datum
         if (meta.trainSubNet(img, label) == label):
-            accuracy[index] = 1
+            accuracy.append(1)
         else:
-            accuracy[index] = 0
-
-    #Graph Subnet Training Accuracy
+            accuracy.append(0)
+    grapher.addGraph(accuracy, "SubNet Train Accuracy")
     
-
-    
-    print("Phase 2: Train AlterNet")
+    print("Phase 2: Train AlterNet on Letters")
+    accuracy = []
     for datum in data.alter_tr():
         (img, label) = datum
-        meta.trainAlterNet(img, label)
+        if (meta.trainAlterNet(img, label) == label):
+            accuracy.append(1)
+        else:
+            accuracy.append(0)
+    grapher.addGraph(accuracy, "AlterNet Train Accuracy")
+
 
     print("Phase 3: Train MetaNet")
+    accuracy = []
     for datum in data.meta_tr():
         (img, label, meta_label) = datum
-        meta.train(img, label, meta_label)
+        if (meta.train(img, label, meta_label) == meta_label):
+            accuracy.append(1)
+        else:
+            accuracy.append(0)
+    grapher.addGraph(accuracy, "MetaNet Train Accuracy")
 
     print("Phase 4: Test MetaNet")
+    accuracy = []
     for datum in data.meta_te():
         (img, label, meta_label) = datum
-        meta.run(img)
+        if (meta.run(img) == label):
+            accuracy.append(1)
+        else:
+            accuracy.append(0)
+    grapher.addGraph(accuracy, "MetaNet Test Accuracy")
         #Compare meta output with labels / meta_labels
 
-    '''
-    for data in nums:
-        #data of the form (data, label, meta_label)
-        (img, lab, meta_lab) = data
-        (result, meta_result) = model.train(img, lab, meta_lab)
-
-        #Update the meta accuracy
-        if np.argmax(meta_result) == meta_lab: 
-            meta_accuracy.append(1)
-        else: 
-            meta_accuracy.append(0)
-
-        #Update the subnet accuracy. 
-        if np.argmax(result) == lab: 
-            accuracy.append(1)
-        else: 
-            accuracy.append(0)
-    
-    #TODO: Half of this data (the numbers) are reused from phase 1
-    print("Phase 2: Testing. (On both characters and numbers.)")
-    for data in combined_data:
-        (img, lab, meta_lab) = data
-        (result, meta_result) = model.run(img, lab, meta_lab)
-
-        #TODO: The results from both phases go into the same array?
-        #Update the meta accuracy
-        if np.argmax(meta_result) == meta_lab: 
-            meta_accuracy.append(1)
-        else: 
-            meta_accuracy.append(0)
-        #Update the subnet accuracy. 
-        if np.argmax(result) == lab: 
-            accuracy.append(1)
-        else: 
-            accuracy.append(0)
-
-    #Graph the results. 
-    print("Reporting Results")
-    meta_accuracy = [sum(meta_accuracy[i:i+window_size])/window_size for i in range(len(meta_accuracy)-window_size)]
-    accuracy = [sum(accuracy[i:i+window_size])/window_size for i in range(len(accuracy)-window_size)]
-
-    plt.plot(accuracy, label="Model Accuracy")
-    plt.plot(meta_accuracy, label="Meta Accuracy")
-    plt.legend(loc='lower right')
-    plt.title(plot_title)
-    plt.show()
-    '''
+    grapher.graphAll()
 
 #testOneHot()
 #testGenerateChild()

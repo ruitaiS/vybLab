@@ -50,10 +50,13 @@ class MetaNet:
         #Return prediction result tuple
         #Use subnet prediction if super returns 1
         #else use alternet prediction
+        '''
         if np.argmax(metaNet_outVector) == 1: 
             return (self.subNet.labelKey[np.argmax(subNet_outVector)], 1)
         else:
             return (self.alterNet.labelKey[np.argmax(self.alterNet.run(img))], 0)
+        '''
+        return np.argmax(metaNet_outVector)
 
     #Return result without altering weights
     #TODO: Should this be a tuple as well to keep it in line with train?
