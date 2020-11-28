@@ -73,18 +73,25 @@ class MetaNet:
             return self.alterNet.labelKey[np.argmax(self.alterNet.run(img))]
     
     #TODO: Generalize this so it generates a MetaNet with a sub, meta, and alter net
-    def generateChild(self, training_set, training_label):
-        child = NeuralNet(no_of_in_nodes = 28*28,
-            no_of_out_nodes = len(self.run(training_set[0])), 
-            no_of_hidden_nodes = 100,
-            learning_rate = 0.1)
+    def generateChild(self, training_set):
 
         #Output vector size is equal to vector size of current network
         #As we create new categories each "generation" of network will have more outnodes
         child = MetaNet(no_of_subnet_labels = len(self.run(training_set[0])))
 
         wrong = 0
-        total = 0
+        total = len(training_set)
+
+        for datum in training_set:
+            img, label = datum
+            parentResult = self.run(img)
+            if (parentResult != label):
+                wrong += 1
+            child.subNet.train(img, parentResult)
+
+        #uuuuuuuuuuuuuuuuuuuuuh how do we train the metanet for the child??? we can't... um. Are we screwed?
+
+        '''
         for i in range(0, len(training_set)):
             #Child sees the training image, but the parent network decides what the label should be
             #child network never actually sees the 'real' label (and neither does the parent)
@@ -97,6 +104,8 @@ class MetaNet:
             total += 1
 
         print("Percentage Mislabelled: " + str(wrong/total))
+        '''
+
         return child
 
     def getSubNet(self):
