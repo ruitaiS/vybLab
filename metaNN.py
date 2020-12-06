@@ -7,18 +7,17 @@ class MetaNet:
     #TODO: Think about how to generalize this so that it can be built up
     def __init__(self, no_of_subnet_labels):
         self.subNet = NeuralNet(no_of_in_nodes = 28*28, 
-                        no_of_out_nodes = number_of_subnet_labels, 
+                        no_of_out_nodes = no_of_subnet_labels, 
                         no_of_hidden_nodes = 60,
                         learning_rate = 0.1)
-        self.superNet = NeuralNet(no_of_in_nodes = no_of_subnet_labels, 
+
+        self.superNet = NeuralNet(no_of_in_nodes = self.subNet.no_of_out_nodes, 
                         no_of_out_nodes = 2, 
                         no_of_hidden_nodes = 15,
                         learning_rate = 0.1)
 
-
         #TODO: This is a placeholder; it's supposed to grow as the alternet learns
         self.number_of_alternet_labels = 26
-
         #Placeholder alternate classifier
         self.alterNet = NeuralNet(no_of_in_nodes = 28*28, 
                         no_of_out_nodes = 26, 
