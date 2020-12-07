@@ -48,13 +48,13 @@ class NeuralNet:
         rad = 1 / np.sqrt(self.no_of_in_nodes)
         X = truncated_normal(mean=0, sd=1, low=-rad, upp=rad)
 
-        #WIH == Weight of Inner, Hidden Nodes(?)
+        #WIH == Weight of Input layer to to Hidden layer(?)
         self.wih = X.rvs((self.no_of_hidden_nodes, self.no_of_in_nodes))
         
         rad = 1 / np.sqrt(self.no_of_hidden_nodes)
         X = truncated_normal(mean=0, sd=1, low=-rad, upp=rad)
 
-        #WHO == Weight of Hidden, Outer Nodes(?)
+        #WHO == Weight of Hidden layer to Output layer(?)
         self.who = X.rvs((self.no_of_out_nodes, self.no_of_hidden_nodes))
 
     def set_learning_rate(self, learning_rate):
@@ -112,17 +112,6 @@ class NeuralNet:
     def equals(self, NN):
         return ((np.equal(self.wih, NN.wih)) and (np.equal(self.who, NN.who)))
 
-    #TODO: This may need fixing wrt labels post one-hot integration
-    def evaluate(self, data, labels):
-        corrects, wrongs = 0, 0
-        for i in range(len(data)):
-            res = self.run(data[i])
-            res_max = res.argmax()
-            if res_max == labels[i]:
-                corrects += 1
-            else:
-                wrongs += 1
-        return corrects, wrongs
 
 
 '''

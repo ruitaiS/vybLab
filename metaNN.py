@@ -88,23 +88,6 @@ class MetaNet:
                 wrong += 1
             child.subNet.train(img, parentResult)
 
-        #uuuuuuuuuuuuuuuuuuuuuh how do we train the metanet for the child??? we can't... um. Are we screwed?
-
-        '''
-        for i in range(0, len(training_set)):
-            #Child sees the training image, but the parent network decides what the label should be
-            #child network never actually sees the 'real' label (and neither does the parent)
-            label = np.argmax(self.run(training_set[i]))
-            child.train(training_set[i], label)
-
-            #Store how much the parents gets wrong
-            if (label != training_label[i]):
-                wrong += 1
-            total += 1
-
-        print("Percentage Mislabelled: " + str(wrong/total))
-        '''
-
         return child
 
     def getSubNet(self):

@@ -15,7 +15,7 @@
 
     2.2 Run convert.py to convert them into csv format
 
-2. Run preproc.py (You only need to do this once)
+2. Run preproc.py (You only need to do this once).
 
 3. Run v1.py
 

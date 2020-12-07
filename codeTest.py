@@ -144,7 +144,7 @@ def testMeta():
     grapher.addGraph(accuracy, "AlterNet Train Accuracy")
 
 
-    print("Phase 3: Train MetaNet")
+    print("Phase 3: Train SuperNet")
     accuracy = []
     for datum in data.meta_tr():
         (img, label, meta_label) = datum
