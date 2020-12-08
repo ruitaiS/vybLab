@@ -117,7 +117,7 @@ def testLabelList():
 def testMeta():
     
     data = Data()
-    meta = MetaNet(no_of_subnet_labels=10)
+    meta = MetaNet(input_vector_size= 28*28, subnet_output_vector_size=10)
     grapher = Grapher()
 
     #TODO: Actually use this for something
@@ -147,8 +147,8 @@ def testMeta():
     print("Phase 3: Train SuperNet")
     accuracy = []
     for datum in data.meta_tr():
-        (img, label, meta_label) = datum
-        if (meta.train(img, label, meta_label) == meta_label):
+        (img, label, super_label) = datum
+        if (meta.trainSuperNet(img, label, super_label) == super_label):
             accuracy.append(1)
         else:
             accuracy.append(0)
@@ -171,10 +171,16 @@ def testMeta():
 
     grapher.graphAll()
 
+def testData():
+    data = Data()
+    print(data.digits_test_imgs[0])
+    print(len(data.digits_test_imgs[0]))
+
 #testOneHot()
 #testGenerateChild()
 #dataSizes()
 #testSplit()
 #testLabelList()
+#testData()
 
 testMeta()
