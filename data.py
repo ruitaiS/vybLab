@@ -84,10 +84,6 @@ class Data:
         self.letters_test_labels = data[3]
 
         #Increment letter labels by 10
-        #TODO: This will not work with NN oneHotting
-        # (will put labels out of range of NN output array size)
-        #Need to convert back or find some other workaround for that
-
         self.letters_train_labels = np.array([i + 10 for i in self.letters_train_labels])
         self.letters_test_labels = np.array([i + 10 for i in self.letters_test_labels])
 
