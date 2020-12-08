@@ -88,10 +88,5 @@ class MetaNet:
                 wrong += 1
             child.subNet.train(img, parentResult)
 
+        print("Parent Mislabelling Percentage: " + wrong / total)
         return child
-
-    def getSubNet(self):
-        return self.subNet
-
-    def getAlterNet(self):
-        return self.alterNet
