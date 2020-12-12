@@ -125,18 +125,18 @@ class Data:
         alterNet_train = np.array(list(zip(self.letters_train_imgs[:40000], np.array(self.letters_train_labels[:40000]))))
         return alterNet_train
 
-    def meta_tr(self):
+    def super_tr(self):
         self.shuffle()
-        metaNet_train = np.array(list(zip(
+        superNet_train = np.array(list(zip(
             np.concatenate((self.digits_train_imgs[40000:], self.letters_train_imgs[40000:])) , 
             np.concatenate((self.digits_train_labels[40000:], self.letters_train_labels[40000:])) , 
             np.concatenate((np.full(20000, 0), np.full(20000, 1))) 
             )))
 
-        shuffler = np.random.permutation(len(metaNet_train))
-        metaNet_train = metaNet_train[shuffler]
+        shuffler = np.random.permutation(len(superNet_train))
+        superNet_train = superNet_train[shuffler]
 
-        return metaNet_train
+        return superNet_train
 
     def meta_te(self):
         self.shuffle()

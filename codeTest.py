@@ -146,7 +146,7 @@ def testMeta():
 
     print("Phase 3: Train SuperNet")
     accuracy = []
-    for datum in data.meta_tr():
+    for datum in data.super_tr():
         (img, label, super_label) = datum
         if (meta.trainSuperNet(img, label, super_label) == super_label):
             accuracy.append(1)
