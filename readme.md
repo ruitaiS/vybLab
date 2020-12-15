@@ -175,35 +175,46 @@ The data class loads the MNIST and extended MNIST datasets into memory.
     10k testing digits
     10k testing letters
 
-	split(dataset, no_of_pieces)
-Splits the specified dataset into the specified number of subsets. Leftover elements are placed into the last set.
-
 	__init__(self)
 Loads mnist and emnist data from the pickled output from preproc.py. Note that labels for letters are offset by 10.
 
+	split(self, dataset, no_of_pieces)
+Splits the specified dataset into the specified number of subsets. Leftover elements are placed into the last set.
+
+	shuffleSet(self, inputSet)
+Shuffles a specified set
+
 	shuffle(self)
-Shuffles all the datasets.
+Shuffles the internal digits and letters sets.
+
+	assign(self)
+Assigns subsets of the digits / letters sets to the sub_tr, alter_tr, super_tr, child_tr, and child_te sets. See the next section on Data sets for more information
 
 #### Data Sets
-Shuffles and returns the subnet training, alternet training, meta training, and meta testing sets respectively.
 
-Returns a shuffled list of datapoints (or a list of lists of datapoints if we want to subdivide each set)
-
-Each datapoint is an (img, label) pair or (img, label, meta_label) tuple.
+Each set is a list of (img, label) pairs or (img, label, super_label) tuples.
 The label is 0-9 for digits and 10-35 for letters.
-The meta_label is 1 if the image is a digit, 0 if the image is a letter.
+The super_label is 1 if the image is a digit, 0 if the image is a letter.
         
-	sub_tr(self)
-40k digits only (from training digits)
+	sub_tr
+The set for training the sub net. 
+28,000 (img, label) pairs. Digits only.
 
-	alter_tr(self)
-40k letters only (from training letters)
+	alter_tr
+The set for training the alter net.	
+28,000 (img, label) pairs. Letters only
 
-	meta_tr(self)
-40k mixed (remaining 20k from digits, 20k from letters)
+	super_tr
+The set for training the super net.
+28,000 (img, label, super_label) tuples. Mixed set of 14,000 digits and 14,000 letters.
 
-	meta_te(self)
-20k mixed (10k digits test, 10k letters test)
+	child_tr
+The set for training the child network.
+28,000 (img, label) pairs. Mixed set of 14,000 digits and 14,000 letters.
+
+	child_te
+The set for testing the child network.
+28,000 (img, label) pairs. Mixed set of 14,000 digits and 14,000 letters.
 
 
 ## grapher.py
