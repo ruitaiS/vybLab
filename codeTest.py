@@ -155,7 +155,11 @@ def testMeta():
     grapher.addGraph(accuracy, "MetaNet Train Accuracy")
 
     print("Phase 4: Test MetaNet")
-    accuracy = []
+
+    #TODO: Need to split up testing set for child, so that child network's accuracy can be tested.
+
+    metaNet_accuracy = []
+    child_accuracy = []
     for datum in data.meta_te():
         (img, label, meta_label) = datum
         if (meta.run(img) == label):

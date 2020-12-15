@@ -87,6 +87,9 @@ class Data:
         self.letters_train_labels = np.array([i + 10 for i in self.letters_train_labels])
         self.letters_test_labels = np.array([i + 10 for i in self.letters_test_labels])
 
+
+        #TODO: Consider combining all digits into one big set, all letters into one big set (The distinction between test / training sets here is arbitrary, afaik)
+
     def shuffle(self):
         #Shuffle Digits Train
         shuffler = np.random.permutation(len(self.digits_train_imgs))
