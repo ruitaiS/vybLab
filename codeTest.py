@@ -1,7 +1,7 @@
 import numpy as np
 from NN import NeuralNet
 from metaNN import MetaNet
-from data import Data, split
+from data import Data
 from grapher import Grapher
 
 #convert (integer) label into one-hot format
@@ -125,7 +125,7 @@ def testMeta():
 
     print("Phase 1: Train Subnet on Numbers")
     accuracy = []
-    for datum in data.sub_tr():
+    for datum in data.sub_tr:
         (img, label) = datum
         if (meta.trainSubNet(img, label) == label):
             accuracy.append(1)
@@ -135,7 +135,7 @@ def testMeta():
     
     print("Phase 2: Train AlterNet on Letters")
     accuracy = []
-    for datum in data.alter_tr():
+    for datum in data.alter_tr:
         (img, label) = datum
         if (meta.trainAlterNet(img, label) == label):
             accuracy.append(1)
@@ -146,7 +146,7 @@ def testMeta():
 
     print("Phase 3: Train SuperNet")
     accuracy = []
-    for datum in data.super_tr():
+    for datum in data.super_tr:
         (img, label, super_label) = datum
         if (meta.trainSuperNet(img, label, super_label) == super_label):
             accuracy.append(1)
@@ -154,24 +154,19 @@ def testMeta():
             accuracy.append(0)
     grapher.addGraph(accuracy, "MetaNet Train Accuracy")
 
-    print("Phase 4: Test MetaNet")
+    print("Phase 4: Generate Child Network")
+    (child, accuracy) = meta.generateChild(data.child_tr)
+    grapher.addGraph(accuracy, "Child Generation Accuracy")
 
-    #TODO: Need to split up testing set for child, so that child network's accuracy can be tested.
-
-    metaNet_accuracy = []
-    child_accuracy = []
-    for datum in data.meta_te():
-        (img, label, meta_label) = datum
-        if (meta.run(img) == label):
+    print("Phase 5: Test Child Network")
+    accuracy = []
+    for datum in data.child_te:
+        (img, label) = datum
+        if (child.run(img, label) == label):
             accuracy.append(1)
         else:
             accuracy.append(0)
-    grapher.addGraph(accuracy, "MetaNet Test Accuracy")
-        #Compare meta output with labels / meta_labels
-
-    print("Phase 5: Generate Child Network")
-    accuracy = []
-    #TODO: This
+    grapher.addGraph(accuracy, "Child Accuracy")
 
     grapher.graphAll()
 

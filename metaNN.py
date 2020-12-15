@@ -78,15 +78,14 @@ class MetaNet:
         #As we create new categories each "generation" of network will have more outnodes
         child = MetaNet(input_vector_size = self.subNet.input_vector_size, subnet_output_vector_size= len(self.run(training_set[0])))
 
-        wrong = 0
-        total = len(training_set)
-
+        accuracy = []
         for datum in training_set:
             img, label = datum
             parentResult = self.run(img)
             if (parentResult != label):
-                wrong += 1
+                accuracy.append(0)
+            else:
+                accuracy.append(1)
             child.subNet.train(img, parentResult)
 
-        print("Parent Mislabelling Percentage: " + wrong / total)
-        return child
+        return child, accuracy
