@@ -168,13 +168,6 @@ The child's subnet imitates the entire functionality of the parent network - it'
 ## data.py
 The data class loads the MNIST and extended MNIST datasets into memory.
 
-
-(E)MNIST Full Set:
-    60k training digits
-    60k training letters
-    10k testing digits
-    10k testing letters
-
 	__init__(self)
 Loads mnist and emnist data from the pickled output from preproc.py. Note that labels for letters are offset by 10.
 
@@ -182,15 +175,17 @@ Loads mnist and emnist data from the pickled output from preproc.py. Note that l
 Splits the specified dataset into the specified number of subsets. Leftover elements are placed into the last set.
 
 	shuffleSet(self, inputSet)
-Shuffles a specified set
+In-place shuffling for a specified set
 
 	shuffle(self)
 Shuffles the internal digits and letters sets.
 
 	assign(self)
-Assigns subsets of the digits / letters sets to the sub_tr, alter_tr, super_tr, child_tr, and child_te sets. See the next section on Data sets for more information
+Assigns the sub_tr, alter_tr, super_tr, child_tr, and child_te datasets. See the next section on Data Sets for more information
 
 #### Data Sets
+
+In total we have 70,000 labelled digits, and 70,000 labelled letters, making for 140,000 labeled images. We subdivide and/or combine these into five sets of 28,000 labelled images each.
 
 Each set is a list of (img, label) pairs or (img, label, super_label) tuples.
 The label is 0-9 for digits and 10-35 for letters.
@@ -201,8 +196,8 @@ The set for training the sub net.
 28,000 (img, label) pairs. Digits only.
 
 	alter_tr
-The set for training the alter net.	
-28,000 (img, label) pairs. Letters only
+The set for training the alter net.
+28,000 (img, label) pairs. Letters only.
 
 	super_tr
 The set for training the super net.
