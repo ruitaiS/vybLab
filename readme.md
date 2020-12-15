@@ -232,6 +232,6 @@ It takes the emnist training set and converts it into a series of csv files that
 
 This was my first time documenting code, so hopefully it is helpful and not too vague or verbose. If you have any questions about how anything works please feel free to email me at shaoruitai@gmail.com.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzNDA4NTAxNTQsLTg0NTI5ODgyNywtMT
-U3OTI2OTY4MywxNDA3MTg4NjAxXX0=
+eyJoaXN0b3J5IjpbLTUxODcxMjQ1NSwtODQ1Mjk4ODI3LC0xNT
+c5MjY5NjgzLDE0MDcxODg2MDFdfQ==
 -->
