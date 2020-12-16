@@ -76,7 +76,7 @@ class MetaNet:
 
         #Output vector size is equal to vector size of current network
         #As we create new categories each "generation" of network will have more outnodes
-        child = MetaNet(input_vector_size = self.subNet.input_vector_size, subnet_output_vector_size= len(self.run(training_set[0])))
+        child = MetaNet(input_vector_size = self.subNet.no_of_in_nodes, subnet_output_vector_size= self.subNet.no_of_out_nodes + self.alterNet.no_of_out_nodes)
 
         accuracy = []
         for datum in training_set:

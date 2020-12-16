@@ -39,19 +39,21 @@ class Data:
 
         with open("data/mnist/pickled_mnist.pkl", "br") as fh:
             data = pickle.load(fh)
-        digits_imgs = np.concatenate(data[0], data[1])
-        digits_labels = np.concatenate(data[2], data[3])
+            digits_imgs = np.concatenate((data[0], data[1]))
+            digits_labels = np.concatenate((data[2], data[3]))
 
-        self.digits = np.array(list(zip(digits_imgs, digits_labels)))
+            self.digits = np.array(list(zip(digits_imgs, digits_labels)))
     
         with open("data/emnist/pickled_emnist.pkl", "br") as fh:
             data = pickle.load(fh)
-        letters_imgs = np.concatenate(data[0], data[1])
-        letters_labels = np.concatenate(data[2], data[3])
-        #Increment letter labels by 10
-        letters_labels = np.array([i + 10 for i in letters_labels])
+            letters_imgs = np.concatenate((data[0], data[1]))
+            letters_labels = np.concatenate((data[2], data[3]))
+            #Increment letter labels by 10
+            letters_labels = np.array([i + 10 for i in letters_labels])
 
-        self.letters = np.array(list(zip(letters_imgs, letters_labels)))
+            self.letters = np.array(list(zip(letters_imgs, letters_labels)))
+
+        self.assign()
 
     def shuffleSet(self, inputSet):
         shuffler = np.random.permutation(len(inputSet))
@@ -96,19 +98,20 @@ class Data:
         split_letters = self.split(self.letters, 5)
 
         #Digits Only
-        self.sub_tr = np.concatenate(split_digits[0], split_digits[1])
+        self.sub_tr = np.concatenate((split_digits[0], split_digits[1]))
 
         #Letters Only
-        self.alter_tr = np.concatenate(split_letters[0], split_letters[1])
+        self.alter_tr = np.concatenate((split_letters[0], split_letters[1]))
 
         #Mixed Digits / Letters, with super_label
+        imgs, labels = zip(*np.concatenate((split_letters[2], split_digits[2])))
         superlabels = np.concatenate((np.full(len(split_letters[2]), 0),np.full(len(split_digits[2]),1)))
-        self.super_tr = np.array(list(zip(np.concatenate(split_letters[2], split_digits[2]) , superlabels)))
+        self.super_tr = np.array(list(zip(imgs, labels, superlabels)))
         self.shuffleSet(self.super_tr)
         
         #Mixed Digits / Letters
-        self.child_tr = np.concatenate(split_letters[3], split_digits[3])
+        self.child_tr = np.concatenate((split_letters[3], split_digits[3]))
         self.shuffleSet(self.child_tr)
 
-        self.child_te = np.concatenate(split_letters[4], split_digits[4])
+        self.child_te = np.concatenate((split_letters[4], split_digits[4]))
         self.shuffleSet(self.child_te)

@@ -162,7 +162,7 @@ def testMeta():
     accuracy = []
     for datum in data.child_te:
         (img, label) = datum
-        if (child.run(img, label) == label):
+        if (child.run(img) == label):
             accuracy.append(1)
         else:
             accuracy.append(0)
@@ -172,8 +172,7 @@ def testMeta():
 
 def testData():
     data = Data()
-    print(data.digits_test_imgs[0])
-    print(len(data.digits_test_imgs[0]))
+    print(len(data.child_tr[1][0]))
 
 #testOneHot()
 #testGenerateChild()
