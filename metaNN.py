@@ -40,25 +40,18 @@ class MetaNet:
 
     #TODO: May become defunct if alternet is designed to cluster (eg. learn unsupervised)
     def trainAlterNet(self, img, label):
+        #print(self.alterNet.labelKey[np.argmax(self.alterNet.train(img, label))])
         return self.alterNet.labelKey[np.argmax(self.alterNet.train(img, label))]
 
     #Train super with the bit of input data. 
     #Returns prediction as (img_label, meta_label) tuple
     def trainSuperNet(self, img, img_label, super_label): 
 
-        #Alternatively: Train subnet only if it's a digit
         subNet_outVector = self.subNet.run(img)
         superNet_outVector = self.superNet.train(subNet_outVector.T, super_label)
 
-        #Return prediction result tuple
-        #Use subnet prediction if super returns 1
-        #else use alternet prediction
-        '''
-        if np.argmax(metaNet_outVector) == 1: 
-            return (self.subNet.labelKey[np.argmax(subNet_outVector)], 1)
-        else:
-            return (self.alterNet.labelKey[np.argmax(self.alterNet.run(img))], 0)
-        '''
+        print(np.argmax(superNet_outVector))
+
         return np.argmax(superNet_outVector)
 
     #Return result without altering weights

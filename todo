@@ -1,25 +1,4 @@
-Goal for Tonight:
-    Get metaNN working with Tester
+Stuff to Look At:
+    alterNet accuracy is close to 0 >> This most likely is b/c the label keying is messed up
 
-Tomorrow:
-    Refactor / update tester.py
-
-tester.py:
-    merge redundant data parsing w/ data.py
-    Add testing only sets (no training)
-    Refactor so it's not just one big "test_model" function
-        seperate data parsing (probably goes into data.py), training, testing, display into their own functions
-
-    tester phase 1 only trains on numbers, so meta never produces a 1
-    phase 2 retrains, with half of the data it's already seen before
-
-
-alternet:
-    Start thinking about how this will learn and update as the model runs
-    Start thinking about how to properly distribute the data
-
-    subnet training
-    metanet & alternet concurrent training?
-    simulated runs (and continued alternet training?)
-
-
+    subNet_outVector is an list of lists of length 1, each of which contains a single float (should just be a list of floats)

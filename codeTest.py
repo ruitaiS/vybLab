@@ -6,7 +6,7 @@ from grapher import Grapher
 
 #convert (integer) label into one-hot format
 #Used in metaNN
-
+'''
 def oneHot(label, no_categories):
     res = np.full(no_categories,0.01)
     res[int(label)] = 0.99
@@ -113,7 +113,7 @@ def testLabelList():
     no_of_out_nodes = 10
     labelList = np.array([i for i in range(no_of_out_nodes)])
     print(labelList)
-
+'''
 def testMeta():
     
     data = Data()
@@ -152,7 +152,7 @@ def testMeta():
             accuracy.append(1)
         else:
             accuracy.append(0)
-    grapher.addGraph(accuracy, "MetaNet Train Accuracy")
+    grapher.addGraph(accuracy, "SuperNet Train Accuracy")
 
     print("Phase 4: Generate Child Network")
     (child, accuracy) = meta.generateChild(data.child_tr)
