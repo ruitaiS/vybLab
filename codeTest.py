@@ -113,7 +113,18 @@ def testLabelList():
     no_of_out_nodes = 10
     labelList = np.array([i for i in range(no_of_out_nodes)])
     print(labelList)
+
+def testData():
+    data = Data()
+    print(len(data.child_tr[1][0]))
 '''
+#testOneHot()
+#testGenerateChild()
+#dataSizes()
+#testSplit()
+#testLabelList()
+#testData()
+
 def testMeta():
     
     data = Data()
@@ -132,7 +143,7 @@ def testMeta():
         else:
             accuracy.append(0)
     grapher.addGraph(accuracy, "SubNet Train Accuracy")
-    
+
     print("Phase 2: Train AlterNet on Letters")
     accuracy = []
     for datum in data.alter_tr:
@@ -142,7 +153,6 @@ def testMeta():
         else:
             accuracy.append(0)
     grapher.addGraph(accuracy, "AlterNet Train Accuracy")
-
 
     print("Phase 3: Train SuperNet")
     accuracy = []
@@ -169,16 +179,5 @@ def testMeta():
     grapher.addGraph(accuracy, "Child Accuracy")
 
     grapher.graphAll()
-
-def testData():
-    data = Data()
-    print(len(data.child_tr[1][0]))
-
-#testOneHot()
-#testGenerateChild()
-#dataSizes()
-#testSplit()
-#testLabelList()
-#testData()
 
 testMeta()

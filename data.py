@@ -84,7 +84,7 @@ class Data:
                 chunk = dataset[i: i+chunkSize]
                 result.append(chunk)
 
-        print("Total Pieces: " + str(len(result)))
+        #print("Total Pieces: " + str(len(result)))
         return result        
 
     def shuffle(self):

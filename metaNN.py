@@ -36,6 +36,7 @@ class MetaNet:
 
     #Single Instance Training; returns predictions before altering weights
     def trainSubNet(self, img, label):
+        print(np.argmax(self.subNet.train(img, label)))
         return self.subNet.labelKey[np.argmax(self.subNet.train(img, label))]
 
     #TODO: May become defunct if alternet is designed to cluster (eg. learn unsupervised)
@@ -50,16 +51,14 @@ class MetaNet:
         subNet_outVector = self.subNet.run(img)
         superNet_outVector = self.superNet.train(subNet_outVector.T, super_label)
 
-        print(np.argmax(superNet_outVector))
-
         return np.argmax(superNet_outVector)
 
     #Return result without altering weights
     #TODO: Should this be a tuple as well to keep it in line with train?
     def run(self, img):
         subNet_outVector = self.subNet.run(img)
-        metaNet_outVector = self.superNet.run(subNet_outVector.T)
-        if np.argmax(metaNet_outVector) == 1: 
+        superNet_outVector = self.superNet.run(subNet_outVector.T)
+        if np.argmax(superNet_outVector) == 1: 
             return self.subNet.labelKey[np.argmax(subNet_outVector)]
         else:
             return self.alterNet.labelKey[np.argmax(self.alterNet.run(img))]
