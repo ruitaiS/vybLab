@@ -44,11 +44,11 @@ digit database​. Using supervised learning, we will first train a model that c
 <img src="Processing.png" align="left" alt="Data Processing"
 	title="Data Processing"/>
 
-Before we do anything, we need to process the data into a format that we can readily access. The MNIST dataset already comes to us as a CSV file, but the extended MNIST is actually a series of ubyte files, and needs to be converted into CSV using the convert.py script.
+Before we do anything, we need to process the data into a format that we can readily access. The MNIST dataset already comes to us as a CSV file, but the extended MNIST is actually a series of ubyte files, and needs to be converted into CSV using the `convert.py` script.
 
-After the datasets are in CSV format, we run preproc.py to pickle them for faster access.
+After the datasets are in CSV format, we run `preproc.py` to pickle them for faster access.
 
-Finally data.py encapsulates the data into a class that we can then import into our main code. Getter functions within the Data class automatically shuffle or split up the data and returns them for use.
+Finally `data.py` encapsulates the data into a class that we can then import into our main code. Getter functions within the Data class automatically shuffle or split up the data and returns them for use.
 
 <br/><br/>
 <br/><br/>
@@ -75,23 +75,17 @@ Once all three networks have been trained, we are ready to run the metaNet. Like
 
 
 ### Child Network Generation
-Generating the child network is similar to the training phases we have seen before, with one small caveat. Rather than train the child using the provided "true" labels, we have the metaNet (the "parent" network) classify the image and generate a label for it. The parent generated label is then used to train the child network.
+Generating the child network is similar to the training phases we have seen before, with one small caveat. Rather than training the child using the labels provided in the dataset, we have the metaNet (the "parent" network) classify the image and generate a label for it. The parent-generated label is then used to train the child network.
 
-Finally we test the accuracy of the child network by having it classify a mixed set of digits and letters on its own.
+Finally we test the accuracy of the child network by having it classify a mixed set of digits and letters by itself.
 
 
 ### Graphing Results
-For each of the training phases as well as the child generation and child testing phases, we built up a historical accuracy plot by starting with an empty list, and appending a 1 if the image was correctly classified, and appending a 0 otherwise. This is graphed using the Matplotlib plotting library.
-
-# Project Findings / Results
-
-
+For each of the training phases, as well as the child generation and child testing phases, we build up a historical accuracy plot by starting with an empty list, and appending a 1 if the image was correctly classified, and appending a 0 otherwise. This is graphed using the Matplotlib plotting library.
 
 
 # Code Documentation
 ## NN.py
-The NN class is the foundation of the project; the metaNN is basically a wrapper containing three separate NN instances.
-
 Each NN instance is a neural network with a single hidden layer. The size of the input, hidden, and output layers (as well as the learning rate) are parameterized; the weights between layers are randomized at initialization.
 
 The networks use the sigmoid function as the activation function, and a truncated normal distribution to generate randomized weights.
@@ -114,32 +108,40 @@ Generates a truncated normal distribution. Used to assign random weights to the 
 ### Class Functions
 	__init__(number of input nodes, number of output nodes, number of hidden nodes, learning rate)*
 
-Initializes a NN with the specified parameters. Note that it calls create_weight_matrices() to initialize the weights between nodes. It also produces a labelKey mapping based on the number of specified output nodes. For n output nodes, the default labelKey is a list of integers from 0 to n-1; the ith output node is labelled with value i. (see the section on the oneHot and set_label_key for more information on how the labelKey is used).
+Initializes a NN with the specified parameters. Note that the constructor calls `create_weight_matrices()` to initialize the weights between nodes. It also produces a labelKey mapping based on the number of specified output nodes. For n output nodes, the default labelKey is a list of integers from 0 to n-1, such that the ith output node is labelled with value i. (see the section the `oneHot` method above, and the `set_label_key` method below, for more information on how the labelKey is used).
 
 	create_weight_matrices()*
-Creates randomized weight matrices between the input and hidden layer (self.wih) and between the hidden layer and the output layer (self.wih). 
+Creates randomized weight matrices between the input and hidden layer (`self.wih`) and between the hidden layer and the output layer (`self.who`). 
 The weights are random variates pulled from a truncated normal distribution.
 
 	set_learning_rate(learning rate)
-Allows user to set the learning rate after instantiation.
+Sets the learning rate after instantiation.
 
 	set_label_key(label Key)
-Allows user to set the labelKey list after instantiation.
+Sets the labelKey list after instantiation.
 
-This is useful if you want to label the output nodes as something other than their index position. For example, in the alterNet letter classifier, we wanted the output node labels to start at 10 instead of 0 (since 0-9 is already being used for numbers), so we set the labelKey to a list of integers from 10-25.
+This is useful if you want to label the output nodes as something other than their index position. For example, in the alterNet letter classifier, we wanted the output node labels to start at 10 instead of 0 (since 0-9 is already being used for numbers), so we set the labelKey to a list of integers from 10-35.
 
-	train(input vector, label)
-Trains the NN on a single input vector / integer label pairing. Returns the values of each output node as an output vector (these can be converted back into integer labels using the labelKey).
+	train(input vector, label)*
+Trains the NN on a single input vector / integer label pair. Runs the network on the given input, calculates the differences between the actual and the expected outputs, and then adjusts the weights within the network according to the desired learning rate.
+
+Returns an output vector whose indices contain the values of each output node on the network. (Using `labelKey[argmax(output_vector)]` we can convert the output vector back into an integer label).
 
 	run(input vector)
-Runs the NN on a single input vector. Returns the values of each output node as an output vector (these can be converted back into integer labels using the labelKey).
+Runs the NN on a single input vector.
+
+Returns an output vector whose indices contain the values of each output node on the network. (Using `labelKey[argmax(output_vector)]` we can convert the output vector back into an integer label)
 
 ## metaNN.py
-The metanet consists of three different NN instances: a subnet, a supernet, and an alternet.
+The metanet consists of three different NN instances: a subnet, a supernet, and an alternet. It also contains code for generating a "child" network.
 
-Every input is first passed to the subnet. The subnet is only trained to classify digits from 0 to 9, but it will still output a result even if it is passed a letter. The supernet takes the output vector from the subnet as input, and classifies the subnet's output as being valid (1), or invalid (0). If the supernet confirms that the subnet's output is valid, the metanet will return the result of the subnet. If however the supernet determines that the subnet's output is invalid (eg. the subnet has been passed a letter), then the metanet will run the input image through the alterNet instead.
+Every input is first passed to the subnet. The subnet is only trained to classify digits from 0 to 9, but it will still output a result even if it is passed a letter. The supernet uses the output vector from the subnet as input, and classifies the subnet's output as being valid (1), or invalid (0). If the supernet confirms that the subnet's output is valid, the metanet will return the result of the subnet. If however the supernet determines that the subnet's output is invalid (eg. the subnet has been passed a letter), then the metanet will run the input image through the alterNet instead.
 
-(We planned for the the alterNet to be a clustering algorithm or some other classifier that is able to do unsupervised learning, but we never got around to implementing that side of things. As of now, the alterNet is simply another member of the NN class that is trained to recognize letters).
+These three networks working in conjunction should be able to properly classify both letters and numbers.
+
+The child network is a means of passing down the knowledge of the metanet's three network hybrid system into a single network. See the `generatechild()` method for more information on how this is done. 
+
+*Note: We planned for the the alterNet to be a clustering algorithm or some other classifier that is able to do unsupervised learning, but we never got around to implementing that side of things. As of now, the alterNet is simply another member of the NN class that is trained to recognize letters*
 
 ### Class Functions
 	__init__(input vector size, subnet output vector size)
@@ -150,7 +152,7 @@ In our case, the input vector is of length 784, with each index representing the
 #### Setters
 	setSubNet(self, subNet)
 	setAlterNet(self, alterNet)
-These two methods allow us to set the subnet and the alternet after instantiation
+These two methods allow us to set the subnet and the alternet after instantiation.
 
 #### Trainers
 	trainSubNet(self, img, label)
@@ -160,32 +162,37 @@ These methods run a single training instance through the subnet, alternet, and s
 
 In addition to a label for the image, the supernet training method also includes a super_label parameter. This label is 0 if the image is a letter and 1 if the image is a digit.
 
-See the section on the train() function in NN.py for more information on how the training functions work. 
+See the section on the `train()` function in `NN.py` for more information on how the training functions work. 
 
-Note that while the NN train and run functions return an output vector, with values at each index for how sure the network is that that index is the correct response, the metaNet train and run functions return an integer label.
+*Note that while the NN train function returns an output vector, the metaNet train functions return integer labels.*
 
 	run(self, img)
 Runs a single image through the metaNet, and returns an integer label.
 
+*Note that while the NN run function returns an output vector, the metaNet run function returns an integer label.*
+
 	generateChild(self, training_set)
-Takes a set of training data consisting of (image, label) pairs, and generates a child metaNN.
+Takes a set of training data consisting of (image, label) pairs, and generates a child network.
 
-The input image is run through the parent network, which returns a label. This label is used to train the child's subnet. At no point does the parent or the child network ever see the "real" label - this is only used for statistics. 
+The child network is a member of the metaNN class. The input vector size is retained from the parent network, but the size of the output vector is the combined size of the parent's subnet output vector plus the parent's alternet vector.
 
-The child's subnet imitates the entire functionality of the parent network - it's range of outputs encompasses both the parent's subnet outputs as well as the parent's alternet outputs.
+We train the child's subnetwork using images from the training set, and labels generated by the parent network. At no point does the parent or the child network ever see the "real" label - this is only so we can track the accuracy of the parent in labelling the image.
+
+
+*Note that while other training method takes only a single image / label pair, the generateChild method takes an entire training set of images and iterates through it internally. The historical accuracy of the parent while training the child network is returned along with the child itself.*
 
 
 ## data.py
 The data class loads the MNIST and extended MNIST datasets into memory.
 
 	__init__(self)
-Loads mnist and emnist data from the pickled output from preproc.py. Note that labels for letters are offset by 10.
+Loads mnist and emnist data from the pickled output from `preproc.py`. Labels for letters are offset by 10.
 
 	split(self, dataset, no_of_pieces)
-Splits the specified dataset into the specified number of subsets. Leftover elements are placed into the last set.
+Splits the dataset into subsets. Leftover elements are placed into the last set.
 
 	shuffleSet(self, inputSet)
-In-place shuffling for a specified set
+In-place shuffling for a set.
 
 	shuffle(self)
 Shuffles the internal digits and letters sets.
@@ -197,7 +204,7 @@ Assigns the sub_tr, alter_tr, super_tr, child_tr, and child_te datasets. See the
 
 In total we have 70,000 labelled digits, and 70,000 labelled letters, making for 140,000 labeled images. We subdivide and/or combine these into five sets of 28,000 labelled images each.
 
-Each set is a list of (img, label) pairs or (img, label, super_label) tuples.
+Each set is a list of (img, label) pairs, or (img, label, super_label) tuples.
 The label is 0-9 for digits and 10-35 for letters.
 The super_label is 1 if the image is a digit, 0 if the image is a letter.
         
@@ -233,7 +240,7 @@ Contains functionality to show a simple accuracy plot over time.
 	process(data_path, train_file, test_file, output_path)
 Takes the image pixel data csv files and pickles them for faster access.
 
-Each line in the csv file has 785 entries. The first is the label for the image (a digit from 0-9), and the remaining 784 each represent the grayscale value from 0 to 255 of a single pixel in a 28 by 28 image. We place the labels into a separate list, and we re-scale the pixel values to range from 0.01 to 1 instead.
+Each line in the csv file has 785 entries. The first is the label for the image -an integer from 0-9 for digits in the mnist dataset, and 0-25 for letters in the emnist dataset. The remaining 784 each represent the grayscale value from 0 to 255 of a single pixel in a 28 by 28 image. We place the labels into a separate list, and we re-scale the pixel values to range from 0.01 to 1. The results are stored in `pickled_mnist.pkl` and `pickled_emnist.pkl` for the mnist and emnist datasets respectively.
 
 ## convert.py*
 	convert(imgf, labelf, outf, n)
@@ -247,7 +254,3 @@ It takes the emnist training set and converts it into a series of csv files that
 ![fin](lol.jpeg)
 
 This was my first time documenting code, so hopefully it is helpful, and not too vague or verbose. If you have any questions about how anything works please feel free to email me at shaoruitai@gmail.com.
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUxODcxMjQ1NSwtODQ1Mjk4ODI3LC0xNT
-c5MjY5NjgzLDE0MDcxODg2MDFdfQ==
--->
