@@ -251,6 +251,7 @@ It takes the emnist training set and converts it into a series of csv files that
 
 ## Concluding Remarks
 
-![fin](lol.jpeg)
+<p align="center"><img src="lol.jpeg"  alt="Fin"
+	title="Fin"/></p>
 
 This was my first time documenting code, so hopefully it is helpful, and not too vague or verbose. If you have any questions about how anything works please feel free to email me at shaoruitai@gmail.com.
