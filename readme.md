@@ -39,6 +39,8 @@ digit database​. Using supervised learning, we will first train a model that c
 
 # Algorithm Outline
 
+[![](http://img.youtube.com/vi/9TBn8wjc1_8/0.jpg)](http://www.youtube.com/watch?v=9TBn8wjc1_8 "")
+
 ### Data Processing
 
 <img src="Processing.png" align="left" alt="Data Processing"
