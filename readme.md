@@ -34,8 +34,8 @@ from a previously unseen category is presented, it will not be properly identifi
 new, but rather will be lumped into whichever existing category is the closest match.
 
 &nbsp;&nbsp;&nbsp;&nbsp; In our project, we would like to develop a form of neural network which can identify novel categories and learn to classify items into those new categories over time. As proof of
-concept, we will be focusing on identifying handwritten characters from the ​mnist handwritten
-digit database​. Using supervised learning, we will first train a model that can reliably identify the numbers from 0-9, then we will give it letters from A-Z. When given letters, which it has never seen before, the NN should be able to (1) identify that they are not numbers, and (2) group the letters into clusters using unsupervised learning techniques.
+concept, we will be focusing on identifying handwritten characters from the MNIST handwritten
+digit database​. Using supervised learning, we will first train a model until it can reliably classify the digits from 0 to 9. Afterwards, we will feed the model letters from A to Z, which do not belong to any of categories it has been trained to classify. The NN should then be able to (1) identify that they are not numbers, and (2) group the letters into clusters using unsupervised learning techniques.
 
 # Algorithm Outline
 
@@ -65,7 +65,7 @@ Finally `data.py` encapsulates the data into a class that we can then import int
 <p align="center"><img src="Execution.png"  alt="Execution Phases"
 	title="Execution Phases"/></p>
 
-Within the metaNN class there are three seperate neural networks, all of which need to be trained.
+Within the metaNN class there are three seperate neural networks, all of which need to be trained in sequence.
 
 The subnet and the alternet, which recognize digits and letters respectively, are trained first. The subnet is trained on a set of 28,000 digit image / label pairs, and similarly the alternet is trained on a set of 28,000 letter image / label pairs.
 
