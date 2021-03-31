@@ -33,6 +33,8 @@ While this is beneficial in situations where the categories are known ahead of t
 
 &nbsp;&nbsp;&nbsp;&nbsp; In our project, we aim to develop a form of NN which can both identify new categories as well as learn to place items into those categories over time. As proof of concept, we will be focusing on identifying handwritten characters and digits from the Modified National Institute of Standards and Technology (MNIST) and extended MNIST database​. Through supervised learning, we will first train our modified NN until it can reliably classify the digits from 0 to 9. Afterwards, we will give as input letters from A to Z, which do not belong to any of categories it has seen thus far. Our modified NN should then be able to (1) identify that these inputs are not numbers, and (2) group the inputs into clusters using unsupervised learning techniques.
 
+
+
 # Algorithm Outline
 
 ### Data Processing
@@ -61,7 +63,7 @@ Finally `data.py` encapsulates the data into a class that we can then import int
 <p align="center"><img src="Execution.png"  alt="Execution Phases"
 	title="Execution Phases"/></p>
 
-Within the metaNN class there are three seperate neural networks, all of which need to be trained in sequence.
+Our modified NN lives in the metaNN.py class. Encapsulated within it are three seperate neural networks, all of which need to be trained in sequence.
 
 The subnet and the alternet, which recognize digits and letters respectively, are trained first. The subnet is trained on a set of 28,000 digit image / label pairs, and similarly the alternet is trained on a set of 28,000 letter image / label pairs.
 
