@@ -31,7 +31,7 @@
 
 NNs work well when the categories are finite, fixed, and known ahead of time, but they fail to properly handle inputs that defy existing categories, nor do they allow for the formation of new ones.
 
-&nbsp;&nbsp;&nbsp;&nbsp; In our project, we aim to develop a form of NN which can both identify new categories as well as learn to place items into those categories over time. As proof of concept, we will be focusing on identifying handwritten characters and digits from the Modified National Institute of Standards and Technology (MNIST) and extended MNIST database​. Through supervised learning, we will first train our modified NN until it can reliably classify the digits from 0 to 9. Afterwards, we will give as input letters from A to Z, which do not belong to any of categories it has seen thus far. Our modified NN should then be able to (1) identify that these inputs are not numbers, and (2) group the inputs into clusters using unsupervised learning techniques.
+&nbsp;&nbsp;&nbsp;&nbsp; In our project, we aim to develop a form of NN which can both identify new categories as well as learn to place items into those categories over time. As proof of concept, we will focus on identifying handwritten characters and digits from the Modified National Institute of Standards and Technology (MNIST) and extended MNIST database​. Through supervised learning, we will first train our modified NN until it can reliably classify the digits from 0 to 9. Afterwards, we will feed it the letters from A to Z as input - these inputs do not belong to any of categories the NN has seen thus far. Our modified NN should then be able to (1) identify that these new inputs are not numbers, and (2) group the inputs into clusters using unsupervised learning techniques.
 
 
 
