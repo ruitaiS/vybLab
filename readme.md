@@ -27,15 +27,11 @@
 3. Run codeTest.py
 
 # Project Motivation
-&nbsp;&nbsp;&nbsp;&nbsp; With traditional neural networks, inputs are classified according to a predetermined set of
-possible outputs. While this is beneficial in situations where the categories are known ahead of
-time and do not change, it does not allow for the formation of novel classifications. If an item
-from a previously unseen category is presented, it will not be properly identified as something
-new, but rather will be lumped into whichever existing category is the closest match.
+&nbsp;&nbsp;&nbsp;&nbsp; A well trained Neural Network (NN) can be very good at classifying inputs into a predetermined set of possible categories, but they are unable to recognize when an input belongs to a category outside of what it has been trained to expect. A NN that has been trained to distinguish between different breeds of cats will not be able to recognize when it is presented with an image of a dog - it assumes all inputs will be images of cats, and when given an image of a dog, will simply categorize it as whichever breed of cat most resembles that dog.
 
-&nbsp;&nbsp;&nbsp;&nbsp; In our project, we would like to develop a form of neural network which can identify novel categories and learn to classify items into those new categories over time. As proof of
-concept, we will be focusing on identifying handwritten characters from the MNIST handwritten
-digit database​. Using supervised learning, we will first train a model until it can reliably classify the digits from 0 to 9. Afterwards, we will feed the model letters from A to Z, which do not belong to any of categories it has been trained to classify. The NN should then be able to (1) identify that they are not numbers, and (2) group the letters into clusters using unsupervised learning techniques.
+While this is beneficial in situations where the categories are known ahead of time and do not change, it does not properly handle unforeseen inputs, and does not allow for the formation of novel classifications.
+
+&nbsp;&nbsp;&nbsp;&nbsp; In our project, we aim to develop a form of NN which can both identify new categories as well as learn to place items into those categories over time. As proof of concept, we will be focusing on identifying handwritten characters and digits from the Modified National Institute of Standards and Technology (MNIST) and extended MNIST database​. Through supervised learning, we will first train our modified NN until it can reliably classify the digits from 0 to 9. Afterwards, we will give as input letters from A to Z, which do not belong to any of categories it has seen thus far. Our modified NN should then be able to (1) identify that these inputs are not numbers, and (2) group the inputs into clusters using unsupervised learning techniques.
 
 # Algorithm Outline
 
@@ -44,9 +40,9 @@ digit database​. Using supervised learning, we will first train a model until 
 <img src="Processing.png" align="left" alt="Data Processing"
 	title="Data Processing"/>
 
-Before we do anything, we need to process the data into a format that we can readily access. The MNIST dataset already comes to us as a CSV file, but the extended MNIST is actually a series of ubyte files, and needs to be converted into CSV using the `convert.py` script.
+Before we do anything, we need to process the data into a set of comma-seperated values (CSV). The MNIST dataset is already in CSV format, but the extended MNIST dataset needs to be converted using the `convert.py` script.
 
-After the datasets are in CSV format, we run `preproc.py` to pickle them for faster access.
+After both datasets are in CSV format, we run `preproc.py` to serialize them using Pickle for faster access.
 
 Finally `data.py` encapsulates the data into a class that we can then import into our main code. Getter functions within the Data class automatically shuffle or split up the data and returns them for use.
 
